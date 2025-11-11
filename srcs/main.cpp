@@ -25,7 +25,7 @@ int	checkFileExtension(char *file)
 
 int	main(int argc, char **argv, char **envp)
 {
-	if(argc < 2 || argc > 2)
+	if(argc != 2)
 	{
 		std::cerr << "Error: Wrong number of arguments" << std::endl;
 		return -1;

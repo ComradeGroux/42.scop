@@ -7,7 +7,7 @@ Position::Position(void)
 
 Position::Position(float x, float y, float z)
 {
-	_w = 1.0
+	_w = 1.0;
 	_x = x / _w;
 	_y = y / _w;
 	_z = z / _w;
@@ -15,7 +15,7 @@ Position::Position(float x, float y, float z)
 
 Position::Position(float x, float y, float z, float w)
 {
-	_w = _w;
+	_w = w;
 	_x = x / _w;
 	_y = y / _w;
 	_z = z / _w;

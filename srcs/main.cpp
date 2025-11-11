@@ -61,17 +61,26 @@ int	main(int argc, char **argv, char **envp)
 		glfwTerminate();
 		return -1;
 	}
-	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
 
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 
+	int	width = 0;
+	int height = 0;
 	while(!glfwWindowShouldClose(window))
 	{
+		glfwGetFramebufferSize(window, &width, &height);
+		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
 }

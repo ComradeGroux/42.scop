@@ -9,16 +9,31 @@
 
 int main(int argc, char **argv, char **envp)
 {
-	if (argc < 2 || argc > 2)
+	if(argc < 2 || argc > 2)
 	{
 		std::cerr << "You need to provide one object" << std::endl;
 		return -1;
 	}
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
 
+	if(!glfwInit())
+		return -1;
+
+	GLFWwindow*	window;
+	window = glfwCreateWindow(640, 480, "scop", NULL, NULL);
+	if(!window)
+	{
+		glfwTerminate();
+		return -1;
+	}
+
+	glfwMakeContextCurrent(window);
+
+	while(!glfwWindowShouldClose(window))
+	{
+
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
 	return 0;
 }

@@ -66,6 +66,8 @@ int	main(int argc, char **argv, char **envp)
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
+	glEnable(GL_DEPTH_TEST);
+
 	int	width = 0;
 	int height = 0;
 	while(!glfwWindowShouldClose(window))

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -23,6 +25,23 @@ int	checkFileExtension(char *file)
 	return strcmp(file + found, ".obj");
 }
 
+std::vector<std::string>	split(std::string& str, const std::string& del)
+{
+	std::vector<std::string>	tokens;
+	size_t						pos = 0;
+	std::string					tok;
+
+	while ((pos = str.find(del)) != std::string::npos)
+	{
+		tok = str.substr(0, pos);
+		tokens.push_back(tok);
+		str.erase(0, pos + del.length());
+	}
+	tokens.push_back(str);
+
+	return tokens;
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	if(argc != 2)
@@ -36,15 +55,31 @@ int	main(int argc, char **argv, char **envp)
 		return -1;
 	}
 
+	std::ifstream infile(argv[1], std::ios::in);
+	if (!infile.is_open())
+	{
+		std::cerr << "Error: File does not exist" << std::endl;
+		return -1;
+	}
 
-
-
-
-
-
-
-
-
+	std::vector<std::vector<std::string>>	file;
+	for (std::string line; std::getline(infile, line);)
+	{
+		std::vector<std::string>	words = split(line, " ");
+		if (std::strcmp(words[0].c_str(), "#") == 0)
+			continue;
+		file.push_back(words);
+	}
+	size_t	length = file.size();
+	for (size_t i = 0; i < length; i++)
+	{
+		size_t	l = file[i].size();
+		for (size_t j = 0; j < l; j++)
+		{
+			std::cout << file[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
 
 
 

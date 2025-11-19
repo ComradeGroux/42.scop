@@ -11,7 +11,7 @@
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
-/**		INIT	 **/
+/**		INIT	 	 **/
 std::vector<std::string>	split(std::string& str, const std::string& del);
 void						checkArgument(int argc, char *file);
 std::ifstream				openFile(char *path);
@@ -21,3 +21,7 @@ void						printVectorVectorString(std::vector<std::vector<std::string>> toPrint)
 /**		CALLBACK	 **/
 void	error_callback(int error, const char* description);
 void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+
+/**		SHADER		 **/
+int		createShader(const std::string& vertexShader, const std::string& fragmentShader);

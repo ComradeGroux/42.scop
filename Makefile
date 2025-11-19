@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -O2 -Wall -Werror -Iheaders -Ilibs/glfw/include
+CXXFLAGS := -std=c++17 -O2 -Wall -Werror -Iheaders -Ilibs/glfw/include -Ilibs/glad
 LDFLAGS := -lGL -lglfw -ldl -lpthread -lm -lX11
 
 SRC_DIR := srcs
@@ -9,7 +9,9 @@ GLFW_BUILD_DIR := $(BUILD_DIR)/glfw
 
 TARGET := scop
 
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+SRCS := $(wildcard $(SRC_DIR)/*.cpp) \
+		libs/glad/glad.c
+
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
 GLFW_LIB := $(GLFW_BUILD_DIR)/src/libglfw3.a

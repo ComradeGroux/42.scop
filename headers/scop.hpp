@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "glad.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>

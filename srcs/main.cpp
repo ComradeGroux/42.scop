@@ -12,7 +12,7 @@ int	main(int argc, char **argv, char **envp)
 		for (std::string line; std::getline(infile, line);)
 		{
 			std::vector<std::string>	words = split(line, " ");
-			if (std::strcmp(words[0].c_str(), "#") == 0)
+			if (std::strcmp(words[0].c_str(), "#") == 0 || words.empty())
 				continue;
 			file.push_back(words);
 		}

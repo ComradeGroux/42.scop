@@ -23,6 +23,7 @@ GLFWwindow*	initWindow()
 	glfwSetErrorCallback(error_callback);
 	if(glfwInit() != GLFW_TRUE)
 		throw std::runtime_error("GLFW init goes wrong");
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

@@ -26,21 +26,9 @@ int	main(int argc, char **argv, char **envp)
 		std::cerr << "Error: " << e.what() << std::endl;
 		return -1;
 	}
-	// printVectorVectorString(file);
 
 
 
-
-
-
-
-
-
-
-	
-
-	int	width = 0;
-	int height = 0;
 
 	float	vertexes[6] = {
 		 0.5,  0.5,
@@ -48,9 +36,6 @@ int	main(int argc, char **argv, char **envp)
 		 0.0, -0.5
 	};
 	unsigned int buffer;
-
-	(void)vertexes;
-	(void)buffer;
 
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -60,6 +45,8 @@ int	main(int argc, char **argv, char **envp)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
+	int	width = 0;
+	int	height = 0;
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwGetFramebufferSize(window, &width, &height);

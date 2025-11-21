@@ -10,14 +10,6 @@ void	checkArgument(int argc, char *file)
 		throw std::invalid_argument("Wrong extension (must be .obj)");
 }
 
-std::ifstream	openFile(char *path)
-{
-	std::ifstream infile(path, std::ios::in);
-	if (!infile.is_open())
-		throw std::invalid_argument("File does not exist");
-	return infile;
-}
-
 GLFWwindow*	initWindow()
 {
 	glfwSetErrorCallback(error_callback);

@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 #include "glad.h"
 #include <GL/gl.h>
@@ -20,7 +21,6 @@
 
 /**		INIT	 	 **/
 void						checkArgument(int argc, char *file);
-std::ifstream				openFile(char *path);
 GLFWwindow*					initWindow();
 
 
@@ -36,3 +36,4 @@ int		createShader(const std::string& vertexShader, const std::string& fragmentSh
 /**		UTILS		 **/
 std::vector<std::string>	split(std::string& str, const std::string& del);
 void						printVectorVectorString(std::vector<std::vector<std::string>> toPrint);
+std::ifstream				openFile(char *path);

@@ -3,6 +3,7 @@
 
 int	main(int argc, char **argv, char **envp)
 {
+	GLFWwindow* window;
 	std::vector<std::vector<std::string>>	file;
 	try
 	{
@@ -17,6 +18,8 @@ int	main(int argc, char **argv, char **envp)
 			file.push_back(words);
 		}
 		infile.close();
+
+		window = initWindow();
 	}
 	catch (const std::exception& e)
 	{
@@ -34,32 +37,7 @@ int	main(int argc, char **argv, char **envp)
 
 
 
-	glfwSetErrorCallback(error_callback);
-	if(glfwInit() != GLFW_TRUE)
-		return -1;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	GLFWwindow*	window = glfwCreateWindow(640, 480, "scop", NULL, NULL);
-	if(!window)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwSetKeyCallback(window, key_callback);
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cerr << "Failed to initialize GLAD\n";
-		return -1;
-	}
-
-	glfwSwapInterval(1);
-
-	glEnable(GL_DEPTH_TEST);
+	
 
 	int	width = 0;
 	int height = 0;

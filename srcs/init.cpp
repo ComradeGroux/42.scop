@@ -1,22 +1,5 @@
 #include "scop.hpp"
 
-std::vector<std::string>	split(std::string& str, const std::string& del)
-{
-	std::vector<std::string>	tokens;
-	size_t						pos = 0;
-	std::string					tok;
-
-	while ((pos = str.find(del)) != std::string::npos)
-	{
-		tok = str.substr(0, pos);
-		tokens.push_back(tok);
-		str.erase(0, pos + del.length());
-	}
-	tokens.push_back(str);
-
-	return tokens;
-}
-
 void	checkArgument(int argc, char *file)
 {
 	if(argc != 2)
@@ -35,14 +18,34 @@ std::ifstream	openFile(char *path)
 	return infile;
 }
 
-void	printVectorVectorString(std::vector<std::vector<std::string>> toPrint)
+GLFWwindow*	initWindow()
 {
-	size_t	length = toPrint.size();
-	for (size_t i = 0; i < length; i++)
+	glfwSetErrorCallback(error_callback);
+	if(glfwInit() != GLFW_TRUE)
+		throw std::runtime_error("GLFW init goes wrong");
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	GLFWwindow*	window = glfwCreateWindow(WIDTH, HEIGHT, "scop", NULL, NULL);
+	if(!window)
 	{
-		size_t	l = toPrint[i].size();
-		for (size_t j = 0; j < l; j++)
-			std::cout << toPrint[i][j] << " ";
-		std::cout << std::endl;
+		glfwTerminate();
+		throw std::runtime_error("The window's creation failed");
 	}
+
+	glfwSetKeyCallback(window, key_callback);
+	glfwMakeContextCurrent(window);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		glfwTerminate();
+		throw std::runtime_error("An issue occured during the loading of GLAD");
+	}
+
+	glfwSwapInterval(1);
+
+	glEnable(GL_DEPTH_TEST);
+
+	return window;
 }

@@ -11,11 +11,17 @@
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
+#ifndef WIDTH
+# define WIDTH 1080
+#endif
+#ifndef HEIGHT
+# define HEIGHT 720
+#endif
+
 /**		INIT	 	 **/
-std::vector<std::string>	split(std::string& str, const std::string& del);
 void						checkArgument(int argc, char *file);
 std::ifstream				openFile(char *path);
-void						printVectorVectorString(std::vector<std::vector<std::string>> toPrint);
+GLFWwindow*					initWindow();
 
 
 /**		CALLBACK	 **/
@@ -25,3 +31,8 @@ void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 /**		SHADER		 **/
 int		createShader(const std::string& vertexShader, const std::string& fragmentShader);
+
+
+/**		UTILS		 **/
+std::vector<std::string>	split(std::string& str, const std::string& del);
+void						printVectorVectorString(std::vector<std::vector<std::string>> toPrint);

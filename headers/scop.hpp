@@ -12,10 +12,10 @@
 #include <GLFW/glfw3.h>
 
 #ifndef WIDTH
-# define WIDTH 1080
+# define WIDTH 640
 #endif
 #ifndef HEIGHT
-# define HEIGHT 720
+# define HEIGHT 480
 #endif
 
 /**		INIT	 	 **/

@@ -4,6 +4,7 @@ LDFLAGS := -lGL -lglfw -ldl -lpthread -lm -lX11
 
 SRC_DIR := srcs
 BUILD_DIR := build
+OBJS_DIR := objs
 GLFW_DIR := libs/glfw-3.4
 GLFW_BUILD_DIR := $(BUILD_DIR)/glfw
 
@@ -12,7 +13,7 @@ TARGET := scop
 SRCS := $(wildcard $(SRC_DIR)/*.cpp) \
 		libs/glad/glad.c
 
-OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/$(OBJS_DIR)/%.o)
 
 GLFW_LIB := $(GLFW_BUILD_DIR)/src/libglfw3.a
 
@@ -22,8 +23,9 @@ $(TARGET): $(OBJS) $(GLFW_LIB)
 	@echo "→ Edition de liens de $(TARGET)"
 	$(CXX) $(OBJS) $(GLFW_LIB) $(LDFLAGS) -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(BUILD_DIR)/$(OBJS_DIR)%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)/$(OBJS_DIR)
 	@echo "→ Compilation de $<"
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -35,11 +37,15 @@ $(GLFW_LIB):
 
 clean:
 	@echo "→ Nettoyage..."
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)/$(OBJS_DIR)
 
-fclean: clean
+fullclean:
+	@echo "→ Nettoyage complet"
+	rm -rf $(BUILD_DIR)/
+
+fclean: fullclean
 	rm -rf $(TARGET)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fullclean fclean re

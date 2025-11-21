@@ -39,6 +39,7 @@ GLFWwindow*	initWindow()
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
+		glfwDestroyWindow(window);
 		glfwTerminate();
 		throw std::runtime_error("An issue occured during the loading of GLAD");
 	}

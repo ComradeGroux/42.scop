@@ -43,3 +43,25 @@ GLFWwindow*	initWindow()
 
 	return window;
 }
+
+e_line_type	hashit(std::string const& inString)
+{
+	if (inString == "#")
+		return eComment;
+	if (inString == "v")
+		return eVertex;
+	if (inString == "f")
+		return eFaces;
+	if (inString.empty())
+		return eComment;
+	if (inString == "o")
+		return eName;
+	if (inString == "usemtl")
+		return eUseMatLib;
+	if (inString == "mtllib")
+		return eMatLib;
+	if (inString == "s")
+		return eSmooth;
+
+	return eDefault;
+}

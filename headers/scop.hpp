@@ -19,18 +19,37 @@
 # define HEIGHT 480
 #endif
 
+enum e_line_type {
+	eDefault,
+	eComment,
+	eVertex,
+	eFaces,
+	eName,
+	eMatLib,
+	eUseMatLib,
+	eSmooth
+};
+
+typedef struct t_Vec3 {
+	float x;
+	float y;
+	float z;
+	float w = 1.0;
+} Vec3;
+
 /**		INIT	 	 **/
 void						checkArgument(int argc, char *file);
 GLFWwindow*					initWindow();
+e_line_type					hashit(std::string const& inString);
 
 
 /**		CALLBACK	 **/
-void	error_callback(int error, const char* description);
-void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void						error_callback(int error, const char* description);
+void						key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
 /**		SHADER		 **/
-int		createShader(const std::string& vertexShader, const std::string& fragmentShader);
+unsigned int				createShader(const std::string& vertexShader, const std::string& fragmentShader);
 
 
 /**		UTILS		 **/

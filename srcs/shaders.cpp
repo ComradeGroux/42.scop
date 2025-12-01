@@ -24,7 +24,7 @@ static unsigned int compileShader(unsigned int type, const std::string& source)
 	return id;
 }
 
-int createShader(const std::string& vertexShader, const std::string& fragmentShader)
+unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
 	unsigned int program = glCreateProgram();
 	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);

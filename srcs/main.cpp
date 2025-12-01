@@ -3,19 +3,69 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	GLFWwindow* window;
-	std::vector<std::vector<std::string>>	file;
+	GLFWwindow* 							window;
+
+	std::vector<Vec3>						pos_vertex;
+	std::vector<std::vector<int>>			fac_vertex;
+	std::string								materialFile;
+
+
 	try
 	{
 		checkArgument(argc, argv[1]);
 		std::ifstream	infile = openFile(argv[1]);
 
+		unsigned int	jFac = 0;
+		std::string syntax_error = "Syntax error in ";
+		syntax_error += argv[1];
 		for (std::string line; std::getline(infile, line);)
 		{
 			std::vector<std::string>	words = split(line, " ");
-			if (std::strcmp(words[0].c_str(), "#") == 0 || words.empty())
-				continue;
-			file.push_back(words);
+			int size = words.size();
+			switch (hashit(words[0]))
+			{
+				case eComment:
+					continue;
+
+				case eVertex:
+					if (size >= 4)
+					{
+						Vec3 pos = { std::stof(words[1]), std::stof(words[2]), std::stof(words[3]) };
+						if (size == 5)
+							pos.w = std::stof(words[4]);
+						else if (size > 5)
+							throw std::invalid_argument(syntax_error);
+						pos.x /= pos.w;
+						pos.y /= pos.w;
+						pos.z /= pos.w;
+						pos_vertex.push_back(pos);
+					}
+					else
+						throw std::invalid_argument(syntax_error);
+					continue;
+
+				case eFaces:
+					for (unsigned int i = 1; i < words.size(); i++)
+					{
+						fac_vertex.push_back({});
+						fac_vertex[jFac].push_back(std::stoi(words[i]));
+					}
+					jFac++;
+					continue;
+
+				case eMatLib:
+					materialFile = words[1];
+					continue;
+
+				case eUseMatLib:
+				case eName:
+				case eSmooth:
+				case eDefault:
+					continue;
+				default:
+					std::cerr << "Error: no case for \"" << words[0] << "\"" << std::endl;
+					break;
+			}
 		}
 		infile.close();
 
@@ -26,6 +76,8 @@ int	main(int argc, char **argv, char **envp)
 		std::cerr << "Error: " << e.what() << std::endl;
 		return -1;
 	}
+
+
 
 
 

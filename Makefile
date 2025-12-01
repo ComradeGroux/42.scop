@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -O2 -Wall -Werror -Iheaders -Ilibs/glfw/include -Ilibs/glad
+CXXFLAGS := -std=c++17 -O2 -Wall -Werror -Iheaders -Ilibs/glfw/include -Ilibs/glad -g
 LDFLAGS := -lGL -lglfw -ldl -lpthread -lm -lX11
 
 SRC_DIR := srcs

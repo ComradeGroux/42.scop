@@ -100,8 +100,8 @@ int	main(int argc, char **argv, char **envp)
 
 	std::string vertex = readFullFile("shaders/basic.vrt");
 	std::string fragment = readFullFile("shaders/basic.frg");
-	unsigned int shaders = createShader(vertex, fragment);
-	glUseProgram(shaders);
+	unsigned int program = createShader(vertex, fragment);
+	glUseProgram(program);
 
 	int	width = 0;
 	int	height = 0;
@@ -119,7 +119,8 @@ int	main(int argc, char **argv, char **envp)
 		glfwPollEvents();
 	}
 
-	glDeleteShader(shaders);
+	glDeleteProgram(program);
+	glfwMakeContextCurrent(nullptr);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

@@ -20,6 +20,7 @@ GLFWwindow*	initWindow()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 	GLFWwindow*	window = glfwCreateWindow(WIDTH, HEIGHT, "scop", NULL, NULL);
 	if(!window)
 	{
@@ -39,8 +40,7 @@ GLFWwindow*	initWindow()
 
 	glfwSwapInterval(1);
 
-	// Empeche l'affichage du triangle de basse ??!!!!
-	// glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
 	return window;
 }

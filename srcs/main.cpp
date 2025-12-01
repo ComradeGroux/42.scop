@@ -110,7 +110,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		glfwGetFramebufferSize(window, &width, &height);
 		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);

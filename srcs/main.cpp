@@ -9,7 +9,6 @@ int	main(int argc, char **argv, char **envp)
 	std::vector<std::vector<int>>			fac_vertex;
 	std::string								materialFile;
 
-
 	try
 	{
 		checkArgument(argc, argv[1]);
@@ -80,11 +79,10 @@ int	main(int argc, char **argv, char **envp)
 
 
 
-	enum { POSITION, COLOR, NUM_BUFF };
-	float	vertexes[6] = {
-		-0.5f, -0.5f,
-		 0.0f,  0.5f,
-		 0.5f, -0.5f
+	float	vertexes[9] = {
+		-0.5f, -0.5f,  0.0f,
+		 0.0f,  0.5f,  1.0f,
+		 0.5f, -0.5f, -1.0f
 	};
 	float	colors[12] = {
 		1.0f,	0.0f,	0.0f,	1.0f,
@@ -100,7 +98,7 @@ int	main(int argc, char **argv, char **envp)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(POSITION_ATTRIB_LOC);
-	glVertexAttribPointer(POSITION_ATTRIB_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[COLOR]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);

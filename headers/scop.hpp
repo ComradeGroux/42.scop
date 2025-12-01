@@ -21,6 +21,7 @@
 
 #define POSITION_ATTRIB_LOC 0
 #define COLOR_ATTRIB_LOC 1
+enum { POSITION, COLOR, NUM_BUFF };
 
 enum e_line_type {
 	eDefault,
@@ -49,7 +50,7 @@ e_line_type					hashit(std::string const& inString);
 /**		CALLBACK	 **/
 void						error_callback(int error, const char* description);
 void						key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
+void						debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam);
 
 /**		SHADER		 **/
 unsigned int				createShader(const std::string& vertexShader, const std::string& fragmentShader);

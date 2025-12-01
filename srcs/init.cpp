@@ -41,6 +41,8 @@ GLFWwindow*	initWindow()
 	glfwSwapInterval(1);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(debug_callback, nullptr);
 
 	return window;
 }

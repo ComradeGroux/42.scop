@@ -12,9 +12,9 @@ void	checkArgument(int argc, char *file)
 
 GLFWwindow*	initWindow()
 {
-	glfwSetErrorCallback(error_callback);
 	if(glfwInit() != GLFW_TRUE)
 		throw std::runtime_error("GLFW init goes wrong");
+	glfwSetErrorCallback(error_callback);
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -39,7 +39,8 @@ GLFWwindow*	initWindow()
 
 	glfwSwapInterval(1);
 
-	glEnable(GL_DEPTH_TEST);
+	// Empeche l'affichage du triangle de basse ??!!!!
+	// glEnable(GL_DEPTH_TEST);
 
 	return window;
 }

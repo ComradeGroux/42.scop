@@ -33,13 +33,19 @@ unsigned int createShader(const std::string& vertexShader, const std::string& fr
 	glAttachShader(program, vs);
 	glAttachShader(program, fs);
 	glLinkProgram(program);
-	glValidateProgram(program);
 
+	int	success;
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[512];
+		glGetProgramInfoLog(program, 512, nullptr, infoLog);
+		std::cerr << "Error: Program linking failed:\n" << infoLog << std::endl;
 
+		glDeleteShader(vs);
+		glDeleteShader(fs);
 
-
-
-	
+		return 0;
+	}
 	return program;
 }
-

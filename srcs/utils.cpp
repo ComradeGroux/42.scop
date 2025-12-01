@@ -37,11 +37,11 @@ std::ifstream	openFile(char *path)
 	return infile;
 }
 
-std::string	readFullFile(char *path)
+std::string	readFullFile(std::string path)
 {
 	try
 	{
-		std::ifstream	infile = openFile(path);
+		std::ifstream	infile = openFile((char*)path.c_str());
 
 		std::string		content;
 		content.resize(std::filesystem::file_size(path));

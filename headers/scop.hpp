@@ -56,3 +56,4 @@ unsigned int				createShader(const std::string& vertexShader, const std::string&
 std::vector<std::string>	split(std::string& str, const std::string& del);
 void						printVectorVectorString(std::vector<std::vector<std::string>> toPrint);
 std::ifstream				openFile(char *path);
+std::string					readFullFile(std::string path);

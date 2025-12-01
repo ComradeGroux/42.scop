@@ -80,37 +80,46 @@ int	main(int argc, char **argv, char **envp)
 
 
 
-
-
 	float	vertexes[6] = {
-		 0.5,  0.5,
-		-0.5,  0.5,
-		 0.0, -0.5
+		-0.5f, -0.5f,
+		 0.0f,  0.5f,
+		 0.5f, -0.5f
 	};
-	unsigned int buffer;
 
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	unsigned int vao, vbo;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertexes, GL_STATIC_DRAW);
 
 	// Telling how to interpret the buffer
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
+	std::string vertex = readFullFile("shaders/basic.vrt");
+	std::string fragment = readFullFile("shaders/basic.frg");
+	unsigned int shaders = createShader(vertex, fragment);
+	glUseProgram(shaders);
+
 	int	width = 0;
 	int	height = 0;
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwGetFramebufferSize(window, &width, &height);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+	glDeleteShader(shaders);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

@@ -91,19 +91,19 @@ int	main(int argc, char **argv, char **envp)
 	};
 
 	unsigned int vao, vbo[NUM_BUFF];
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(NUM_BUFF, vbo);
+	cgl(glGenVertexArrays(1, &vao));
+	cgl(glBindVertexArray(vao));
+	cgl(glGenBuffers(NUM_BUFF, vbo));
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(POSITION_ATTRIB_LOC);
-	glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+	cgl(glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]));
+	cgl(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW));
+	cgl(glEnableVertexAttribArray(POSITION_ATTRIB_LOC));
+	cgl(glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0));
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[COLOR]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(COLOR_ATTRIB_LOC);
-	glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+	cgl(glBindBuffer(GL_ARRAY_BUFFER, vbo[COLOR]));
+	cgl(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
+	cgl(glEnableVertexAttribArray(COLOR_ATTRIB_LOC));
+	cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
 
 	std::string vertex = readFullFile("shaders/basic.vrt");
 	std::string fragment = readFullFile("shaders/basic.frg");
@@ -111,24 +111,24 @@ int	main(int argc, char **argv, char **envp)
 
 	int	width = 0;
 	int	height = 0;
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	cgl(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	while(!glfwWindowShouldClose(window))
 	{
-		glfwGetFramebufferSize(window, &width, &height);
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		cgl(glfwGetFramebufferSize(window, &width, &height));
+		cgl(glViewport(0, 0, width, height));
+		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-		glUseProgram(program);
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		cgl(glUseProgram(program));
+		cgl(glBindVertexArray(vao));
+		cgl(glDrawArrays(GL_TRIANGLES, 0, 3));
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		cgl(glfwSwapBuffers(window));
+		cgl(glfwPollEvents());
 	}
 
-	glDeleteProgram(program);
-	glfwMakeContextCurrent(nullptr);
-	glfwDestroyWindow(window);
+	cgl(glDeleteProgram(program));
+	cgl(glfwMakeContextCurrent(nullptr));
+	cgl(glfwDestroyWindow(window));
 	glfwTerminate();
 	return 0;
 }

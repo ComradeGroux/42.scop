@@ -80,28 +80,36 @@ int	main(int argc, char **argv, char **envp)
 
 
 
+	enum { POSITION, COLOR, NUM_BUFF };
 	float	vertexes[6] = {
 		-0.5f, -0.5f,
 		 0.0f,  0.5f,
 		 0.5f, -0.5f
 	};
+	float	colors[12] = {
+		1.0f,	0.0f,	0.0f,	1.0f,
+		0.0f,	1.0f,	0.0f,	1.0f,
+		0.0f,	0.0f,	1.0f,	1.0f
+	};
 
-	unsigned int vao, vbo;
+	unsigned int vao, vbo[NUM_BUFF];
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	glGenBuffers(NUM_BUFF, vbo);
 
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), vertexes, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(POSITION_ATTRIB_LOC);
+	glVertexAttribPointer(POSITION_ATTRIB_LOC, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-	// Telling how to interpret the buffer
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[COLOR]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(COLOR_ATTRIB_LOC);
+	glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
 
 	std::string vertex = readFullFile("shaders/basic.vrt");
 	std::string fragment = readFullFile("shaders/basic.frg");
 	unsigned int program = createShader(vertex, fragment);
-	glUseProgram(program);
 
 	int	width = 0;
 	int	height = 0;
@@ -112,6 +120,7 @@ int	main(int argc, char **argv, char **envp)
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glUseProgram(program);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 

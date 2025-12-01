@@ -19,6 +19,9 @@
 # define HEIGHT 480
 #endif
 
+#define POSITION_ATTRIB_LOC 0
+#define COLOR_ATTRIB_LOC 1
+
 enum e_line_type {
 	eDefault,
 	eComment,

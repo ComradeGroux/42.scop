@@ -4,7 +4,7 @@ static e_line_type	hashit(std::string const& inString);
 static std::string syntax_error = "Syntax error in ";
 static void parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line);
 static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::string> line, unsigned int& index);
-static void parseMatLib(Object& obj, std::string file);
+static void parseMatLib(Object& obj, std::string file, std::string path);
 
 void	checkArgument(int argc, char *file)
 {
@@ -84,7 +84,7 @@ void initObjet(char *file, Object& obj)
 				continue;
 			case eMatLib:
 				materialFile = words[1];
-				parseMatLib(obj, materialFile);
+				parseMatLib(obj, materialFile, file);
 				continue;
 			case eUseMatLib:
 			case eName:
@@ -173,9 +173,12 @@ static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::st
 	index++;
 }
 
-static void parseMatLib(Object& obj, std::string file)
+static void parseMatLib(Object& obj, std::string file, std::string path)
 {
-	std::ifstream infile = openFile((char*)file.c_str());
+	std::filesystem::path p = path;
+	std::string realPath = p.parent_path();
+	realPath += std::filesystem::path::preferred_separator + file;
+	std::ifstream infile = openFile((char*)realPath.c_str());
 
 	for (std::string line; std::getline(infile, line);)
 	{

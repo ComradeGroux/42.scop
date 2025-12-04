@@ -5,8 +5,9 @@
 
 Object::Object(void)
 {
-	_numFaces = 0;
+	fileCountFaces = 0;
 	_numTriangles = 0;
+	name = "";
 }
 
 Object::Object(const Object& src)

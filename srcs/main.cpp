@@ -19,48 +19,95 @@ int	main(int argc, char **argv, char **envp)
 
 
 
+	std::vector<Vertex>	tmp = obj.getVertices();
+	std::vector<float>	vectorFloat;
+	for (unsigned int i = 0; i < tmp.size(); i++)
+	{
+		vectorFloat.push_back(tmp[i].x);
+		vectorFloat.push_back(tmp[i].y);
+		vectorFloat.push_back(tmp[i].z);
+	}
+	float rawPos[vectorFloat.size()];
+	for (unsigned int i = 0; i < vectorFloat.size(); i++)
+		rawPos[i] = vectorFloat[i];
+
+	std::vector<std::vector<int>>	tmp1 = obj.getFaces();
+	std::vector<int>				vectorInt;
+	for (unsigned int i = 0; i < tmp1.size(); i++)
+	{
+		if (tmp1.size() != 3)
+			continue;
+		for (unsigned int j = 0; j < tmp1[i].size(); j++)
+			vectorInt.push_back(tmp1[i][j]);
+	}
+	unsigned int rawIndex[vectorInt.size()];
+	for (unsigned int i = 0; i < vectorInt.size(); i++)
+		rawIndex[i] = vectorInt[i];
 
 
 
-	unsigned int vao, vbo[NUM_BUFF];
+	unsigned int vao;
 	cgl(glGenVertexArrays(1, &vao));
 	cgl(glBindVertexArray(vao));
-	cgl(glGenBuffers(NUM_BUFF, vbo));
 
+	VertexBuffer vb(rawPos, sizeof(rawPos));
+	cgl(glEnableVertexAttribArray(POSITION_ATTRIB_LOC));
+	glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+	
+	float	colors[12] = {
+		0.5f, 0.05f, 0.05f, 1.0f,
+		0.05f, 0.05f, 0.05f, 1.0f,
+		0.05f, 0.05f, 0.05f, 1.0f
+	};
+	VertexBuffer color(colors, 12);
+	cgl(glEnableVertexAttribArray(COLOR_ATTRIB_LOC));
+	cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
+
+
+	
+
+	IndexBuffer	ib(rawIndex, vectorInt.size());
+	
 	std::string vertexShader = readFullFile("shaders/basic.vrt");
 	std::string fragmentShader = readFullFile("shaders/basic.frg");
 	unsigned int program = createShader(vertexShader, fragmentShader);
-
+	
+	cgl(glBindVertexArray(0));
+	cgl(glUseProgram(0));
+	cgl(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	cgl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	
 	int	width = 0;
 	int	height = 0;
 	float r = 0.5f;
 	float increment = 0.05f;
-
-	cgl(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-	while(!glfwWindowShouldClose(window))
+		while(!glfwWindowShouldClose(window))
 	{
 		cgl(glfwGetFramebufferSize(window, &width, &height));
 		cgl(glViewport(0, 0, width, height));
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-		r = 0.55f;
-		increment = 0.1f;
-		for (unsigned int i = 0; i < obj.triangles.size(); i++)
-		{
-			drawTriangle(program,
-					vao,
-					vbo,
-					obj.triangles[i][0],
-					obj.triangles[i][1],
-					obj.triangles[i][2],
-					r);
+		glBindVertexArray(vao);
+		glUseProgram(program);
 
-			if (r > 0.9f)
-				increment = -0.05f;
-			else if (r < 0.1f)
-				increment = 0.05f;
-			r += increment;
-		}
+		colors[1] = r;
+		colors[4] = r;
+		colors[6] = r;
+		color.bind();
+		cgl(glBufferData(GL_ARRAY_BUFFER, 12, colors, GL_STATIC_DRAW));
+		cgl(glEnableVertexAttribArray(COLOR_ATTRIB_LOC));
+		cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
+
+
+		ib.bind();
+
+		glDrawElements(GL_TRIANGLES, vectorInt.size(), GL_UNSIGNED_INT, nullptr);
+
+		if (r > 1.0f)
+			increment = -0.05f;
+		else if (r < 0.0f)
+			increment = 0.05f;
+		r += increment;
 
 		cgl(glfwSwapBuffers(window));
 		cgl(glfwPollEvents());

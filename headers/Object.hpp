@@ -28,4 +28,8 @@ class Object {
 		Mtl									mtl;
 
 		void	createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<int>> faces);
+
+		inline std::vector<Vertex>				getVertices(void) const { return _vertices; }
+		inline std::vector<std::vector<int>>	getFaces(void) const { return _faces; }
+		inline int 								getNumberBaseTriangle(void) const { return triangles.size() - _squares.size(); }
 };

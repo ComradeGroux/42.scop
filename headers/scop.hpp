@@ -1,7 +1,9 @@
 #pragma once
 
 #include "headers.hpp"
-#include "object.hpp"
+#include "Object.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 /**		MAIN		 **/
 void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, float baseColor);
@@ -27,5 +29,3 @@ unsigned int				createShader(const std::string& vertexShader, const std::string&
 std::vector<std::string>	split(std::string& str, const std::string& del);
 std::ifstream				openFile(char *path);
 std::string					readFullFile(std::string path);
-void						GLClearError();
-void						GLGetError(const char *function, const char *file, int line);

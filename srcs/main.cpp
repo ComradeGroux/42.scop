@@ -33,8 +33,8 @@ int	main(int argc, char **argv, char **envp)
 
 	int	width = 0;
 	int	height = 0;
-	float r = 0.05f;
-	float increment = 0.1f;
+	float r = 0.5f;
+	float increment = 0.05f;
 
 	cgl(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	while(!glfwWindowShouldClose(window))
@@ -55,32 +55,12 @@ int	main(int argc, char **argv, char **envp)
 					obj.triangles[i][2],
 					r);
 
-			if (r > 1.0f)
-				increment = -0.1f;
-			else if (r < 0.0f)
-				increment = 0.1f;
+			if (r > 0.9f)
+				increment = -0.05f;
+			else if (r < 0.1f)
+				increment = 0.05f;
 			r += increment;
 		}
-		r = 0.55f;
-		increment = 0.1f;
-		for (unsigned int i = 0; i < obj.triangles.size(); i++)
-		{
-			drawSquare(program,
-					vao,
-					vbo,
-					obj.squares[i][0],
-					obj.squares[i][1],
-					obj.squares[i][2],
-					obj.squares[i][3],
-					r);
-
-			if (r > 1.0f)
-				increment = -0.1f;
-			else if (r < 0.0f)
-				increment = 0.1f;
-			r += increment;
-		}
-
 
 		cgl(glfwSwapBuffers(window));
 		cgl(glfwPollEvents());
@@ -105,9 +85,9 @@ void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[N
 	};
 
 	float	colors[12] = {
-		baseColor, 0.5f, 0.5f, 1.0f,
-		baseColor, 0.5f, 0.5f, 1.0f,
-		baseColor, 0.5f, 0.5f, 1.0f
+		baseColor, baseColor, baseColor, 1.0f,
+		baseColor, baseColor, baseColor, 1.0f,
+		baseColor, baseColor, baseColor, 1.0f
 	};
 
 	cgl(glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]));
@@ -121,10 +101,4 @@ void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[N
 	cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
 
 	cgl(glDrawArrays(GL_TRIANGLES, 0, 3));
-}
-
-void drawSquare(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, Vertex d, float baseColor)
-{
-	drawTriangle(shaderToUse, vao, vbo, a, b, c, baseColor);
-	drawTriangle(shaderToUse, vao, vbo, b, a, d, baseColor);
 }

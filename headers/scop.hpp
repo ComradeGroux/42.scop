@@ -5,7 +5,6 @@
 
 /**		MAIN		 **/
 void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, float baseColor);
-void drawSquare(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, Vertex d, float baseColor);
 
 
 /**		INIT	 	 **/

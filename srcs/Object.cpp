@@ -67,6 +67,15 @@ void	Object::_convertSquaresToTriangles(void)
 {
 	for (unsigned int i = 0; i < squares.size(); i++)
 	{
+		Vertex	a = squares[i][0];
+		Vertex	b = squares[i][1];
+		Vertex	c = squares[i][2];
+		Vertex	d = squares[i][3];
 
+		std::vector<Vertex>	t1 = { a, b, c };
+		std::vector<Vertex>	t2 = { a, c, d };
+
+		triangles.push_back(t1);
+		triangles.push_back(t2);
 	}
 }

@@ -30,21 +30,52 @@ enum e_line_type {
 	eDefault,
 	eComment,
 	eVertex,
+	eVertexNormal,
+	eVertexTexture,
 	eFaces,
 	eName,
 	eMatLib,
 	eUseMatLib,
+	eNewMat,
+	eNs,
+	eKa,
+	eKd,
+	eKs,
+	eNi,
+	eD,
+	eIllum,
 	eSmooth
 };
 
 typedef struct t_Vertex {
-	float x;
-	float y;
-	float z;
-	float tX;
-	float tY;
-	float nX;
-	float nY;
-	float nZ;
+	float x, y, z;
+	float tX, tY;
+	float nX, nY, nZ;
 	float w = 1.0;
 } Vertex;
+
+struct Uv {
+	float u, v, w;
+};
+
+struct Ka {
+	float r, g, b;
+};
+
+struct Kd {
+	float r, g, b;
+};
+
+struct Ks {
+	float r, g, b;
+};
+
+struct Mtl
+{
+	Ka ka;
+	Kd kd;
+	Ks ks;
+	float ns, ni, d;
+	int illum;
+	std::string name;
+};

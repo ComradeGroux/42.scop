@@ -5,7 +5,9 @@
 class Object {
 	private:
 		std::vector<Vertex>					_vertices;
+		std::vector<std::vector<int>>		_faces;
 		std::vector<std::vector<Vertex>>	_shapes;
+		std::vector<std::vector<Vertex>>	_squares;
 		
 		void	_createShapes(void);
 		void	_separateTrianglesSquares(void);
@@ -17,11 +19,13 @@ class Object {
 		Object&	operator=(const Object& src);
 		~Object(void);
 		
-		std::vector<std::vector<int>>		_faces;
+		std::string	name;
+
+
 		std::vector<std::vector<Vertex>>	triangles;
-		std::vector<std::vector<Vertex>>	squares;
-		unsigned int						_numFaces;
+		unsigned int						fileCountFaces;
 		unsigned int						_numTriangles;
+		Mtl									mtl;
 
 		void	createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<int>> faces);
 };

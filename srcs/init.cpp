@@ -4,7 +4,7 @@ static e_line_type	hashit(std::string const& inString);
 static std::string syntax_error = "Syntax error in ";
 static void parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line);
 static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::string> line, unsigned int& index);
-
+static void parseMatLib(Object& obj, std::string file);
 
 void	checkArgument(int argc, char *file)
 {
@@ -61,7 +61,7 @@ void initObjet(char *file, Object& obj)
 
 	std::ifstream	infile = openFile(file);
 
-	unsigned int	numFaces = 0;
+	unsigned int	countFaces = 0;
 	syntax_error += file;
 	for (std::string line; std::getline(infile, line);)
 	{
@@ -70,21 +70,25 @@ void initObjet(char *file, Object& obj)
 		{
 			case eComment:
 				continue;
-
 			case eVertex:
 				parseVertex(pos_vertex, words);
 				continue;
+			case eVertexNormal:
 
-			case eFaces:
-				parseFaces(fac_vertex, words, numFaces);
 				continue;
+			case eVertexTexture:
 
+				continue;
+			case eFaces:
+				parseFaces(fac_vertex, words, countFaces);
+				continue;
 			case eMatLib:
 				materialFile = words[1];
+				parseMatLib(obj, materialFile);
 				continue;
-
 			case eUseMatLib:
 			case eName:
+				obj.name = words[1];
 			case eSmooth:
 			case eDefault:
 				continue;
@@ -96,22 +100,43 @@ void initObjet(char *file, Object& obj)
 	infile.close();
 
 	obj.createTriangles(pos_vertex, fac_vertex);
+	obj.fileCountFaces = countFaces;
 }
 
 static e_line_type	hashit(std::string const& inString)
 {
+	if (inString.empty())
+		return eComment;
 	if (inString == "#")
 		return eComment;
 	if (inString == "v")
 		return eVertex;
+	if (inString == "vn")
+		return eVertexNormal;
+	if (inString == "vt")
+		return eVertexTexture;
 	if (inString == "f")
 		return eFaces;
-	if (inString.empty())
-		return eComment;
 	if (inString == "o")
 		return eName;
 	if (inString == "usemtl")
 		return eUseMatLib;
+	if (inString == "newmtl")
+		return eNewMat;
+	if (inString == "Ns")
+		return eNs;
+	if (inString == "Ka")
+		return eKa;
+	if (inString == "Kd")
+		return eKd;
+	if (inString == "Ks")
+		return eKs;
+	if (inString == "Ni")
+		return eNi;
+	if (inString == "d")
+		return eD;
+	if (inString == "illum")
+		return eIllum;
 	if (inString == "mtllib")
 		return eMatLib;
 	if (inString == "s")
@@ -146,4 +171,46 @@ static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::st
 	for (unsigned int i = 1; i < line.size(); i++)
 		faces[index].push_back(std::stoi(line[i]));
 	index++;
+}
+
+static void parseMatLib(Object& obj, std::string file)
+{
+	std::ifstream infile = openFile((char*)file.c_str());
+
+	for (std::string line; std::getline(infile, line);)
+	{
+		std::vector<std::string>	words = split(line, " ");
+		switch (hashit(words[0]))
+		{
+			case eComment:
+				continue;
+			case eNewMat:
+				obj.mtl.name = words[1];
+				continue;
+			case eNs:
+				obj.mtl.ns = std::stof(words[1]);
+				continue;
+			case eKa:
+				obj.mtl.ka = { std::stof(words[1]), std::stof(words[2]), std::stof(words[3]) };
+				continue;
+			case eKd:
+				obj.mtl.kd = { std::stof(words[1]), std::stof(words[2]), std::stof(words[3]) };
+				continue;
+			case eKs:
+				obj.mtl.ks = { std::stof(words[1]), std::stof(words[2]), std::stof(words[3]) };
+				continue;
+			case eNi:
+				obj.mtl.ni = std::stof(words[1]);
+				continue;
+			case eD:
+				obj.mtl.d = std::stof(words[1]);
+				continue;
+			case eIllum:
+				obj.mtl.illum = std::stoi(words[1]);
+				continue;
+
+			default:
+				continue;
+		}
+	}
 }

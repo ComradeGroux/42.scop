@@ -57,7 +57,7 @@ void	Object::_separateTrianglesSquares(void)
 		if (_shapes[i].size() == 3)
 			triangles.push_back(_shapes[i]);
 		else if (_shapes[i].size() == 4)
-			squares.push_back(_shapes[i]);
+			_squares.push_back(_shapes[i]);
 		else
 			throw std::invalid_argument("Invalid shape detected !");
 	}
@@ -65,12 +65,12 @@ void	Object::_separateTrianglesSquares(void)
 
 void	Object::_convertSquaresToTriangles(void)
 {
-	for (unsigned int i = 0; i < squares.size(); i++)
+	for (unsigned int i = 0; i < _squares.size(); i++)
 	{
-		Vertex	a = squares[i][0];
-		Vertex	b = squares[i][1];
-		Vertex	c = squares[i][2];
-		Vertex	d = squares[i][3];
+		Vertex	a = _squares[i][0];
+		Vertex	b = _squares[i][1];
+		Vertex	c = _squares[i][2];
+		Vertex	d = _squares[i][3];
 
 		std::vector<Vertex>	t1 = { a, b, c };
 		std::vector<Vertex>	t2 = { a, c, d };

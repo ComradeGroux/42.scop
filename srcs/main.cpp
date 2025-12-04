@@ -79,21 +79,88 @@ int	main(int argc, char **argv, char **envp)
 
 
 
-	float	vertexes[9] = {
-		-0.5f, -0.5f,  0.0f,
-		 0.0f,  0.5f,  1.0f,
-		 0.5f, -0.5f, -1.0f
-	};
-	float	colors[12] = {
-		1.0f,	0.0f,	0.0f,	1.0f,
-		0.0f,	1.0f,	0.0f,	1.0f,
-		0.0f,	0.0f,	1.0f,	1.0f
-	};
+
 
 	unsigned int vao, vbo[NUM_BUFF];
 	cgl(glGenVertexArrays(1, &vao));
 	cgl(glBindVertexArray(vao));
 	cgl(glGenBuffers(NUM_BUFF, vbo));
+
+	std::string vertexShader = readFullFile("shaders/basic.vrt");
+	std::string fragmentShader = readFullFile("shaders/basic.frg");
+	unsigned int program = createShader(vertexShader, fragmentShader);
+
+	int	width = 0;
+	int	height = 0;
+	float r = 0.05f;
+	float increment = 0.1f;
+
+	cgl(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+	while(!glfwWindowShouldClose(window))
+	{
+		cgl(glfwGetFramebufferSize(window, &width, &height));
+		cgl(glViewport(0, 0, width, height));
+		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		r = 0.05f;
+		increment = 0.1f;
+		for (unsigned int i = 0; i < fac_vertex.size(); i++)
+		{
+			if (fac_vertex[i].size() == 3)
+			{
+				drawTriangle(program,
+						vao,
+						vbo,
+						pos_vertex[fac_vertex[i][0]],
+						pos_vertex[fac_vertex[i][1]],
+						pos_vertex[fac_vertex[i][2]],
+						r);
+			}
+			else if (fac_vertex[i].size() == 4)
+			{
+				drawSquare(program,
+						vao,
+						vbo,
+						pos_vertex[fac_vertex[i][0]],
+						pos_vertex[fac_vertex[i][1]],
+						pos_vertex[fac_vertex[i][2]],
+						pos_vertex[fac_vertex[i][3]],
+						r);
+			}
+
+			if (r > 1.0f)
+				increment = -0.1f;
+			else if (r < 0.0f)
+				increment = 0.1f;
+			r += increment;
+		}
+		cgl(glfwSwapBuffers(window));
+		cgl(glfwPollEvents());
+	}
+
+	cgl(glDeleteProgram(program));
+	cgl(glfwMakeContextCurrent(nullptr));
+	cgl(glfwDestroyWindow(window));
+	glfwTerminate();
+	return 0;
+}
+
+void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vec3 a, Vec3 b, Vec3 c, float baseColor)
+{
+	cgl(glUseProgram(shaderToUse));
+	cgl(glBindVertexArray(vao));
+
+	float vertexes[9] = {
+		a.x, a.y, a.z,
+		b.x, b.y, b.z,
+		c.x, c.y, c.z
+	};
+
+	float	colors[12] = {
+		baseColor, 0.5f, 0.5f, 1.0f,
+		baseColor, 0.5f, 0.5f, 1.0f,
+		baseColor, 0.5f, 0.5f, 1.0f
+	};
 
 	cgl(glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]));
 	cgl(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW));
@@ -105,30 +172,11 @@ int	main(int argc, char **argv, char **envp)
 	cgl(glEnableVertexAttribArray(COLOR_ATTRIB_LOC));
 	cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
 
-	std::string vertex = readFullFile("shaders/basic.vrt");
-	std::string fragment = readFullFile("shaders/basic.frg");
-	unsigned int program = createShader(vertex, fragment);
+	cgl(glDrawArrays(GL_TRIANGLES, 0, 3));
+}
 
-	int	width = 0;
-	int	height = 0;
-	cgl(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-	while(!glfwWindowShouldClose(window))
-	{
-		cgl(glfwGetFramebufferSize(window, &width, &height));
-		cgl(glViewport(0, 0, width, height));
-		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-		cgl(glUseProgram(program));
-		cgl(glBindVertexArray(vao));
-		cgl(glDrawArrays(GL_TRIANGLES, 0, 3));
-
-		cgl(glfwSwapBuffers(window));
-		cgl(glfwPollEvents());
-	}
-
-	cgl(glDeleteProgram(program));
-	cgl(glfwMakeContextCurrent(nullptr));
-	cgl(glfwDestroyWindow(window));
-	glfwTerminate();
-	return 0;
+void drawSquare(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vec3 a, Vec3 b, Vec3 c, Vec3 d, float baseColor)
+{
+	drawTriangle(shaderToUse, vao, vbo, a, b, c, baseColor);
+	drawTriangle(shaderToUse, vao, vbo, b, a, d, baseColor);
 }

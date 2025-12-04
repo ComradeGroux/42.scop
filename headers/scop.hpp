@@ -44,6 +44,11 @@ typedef struct t_Vec3 {
 } Vec3;
 
 
+/**		MAIN		 **/
+void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vec3 a, Vec3 b, Vec3 c, float baseColor);
+void drawSquare(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vec3 a, Vec3 b, Vec3 c, Vec3 d, float baseColor);
+
+
 /**		INIT	 	 **/
 void						checkArgument(int argc, char *file);
 GLFWwindow*					initWindow();

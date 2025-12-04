@@ -10,8 +10,7 @@ void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[N
 /**		INIT	 	 **/
 void						checkArgument(int argc, char *file);
 GLFWwindow*					initWindow();
-void 						processObjFile(char *file, Object& obj);
-e_line_type					hashit(std::string const& inString);
+void						initObjet(char *file, Object& obj);
 
 
 /**		CALLBACK	 **/
@@ -26,7 +25,6 @@ unsigned int				createShader(const std::string& vertexShader, const std::string&
 
 /**		UTILS		 **/
 std::vector<std::string>	split(std::string& str, const std::string& del);
-void						printVectorVectorString(std::vector<std::vector<std::string>> toPrint);
 std::ifstream				openFile(char *path);
 std::string					readFullFile(std::string path);
 void						GLClearError();

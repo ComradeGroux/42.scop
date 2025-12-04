@@ -1,17 +1,5 @@
 #include "scop.hpp"
 
-void	printVectorVectorString(std::vector<std::vector<std::string>> toPrint)
-{
-	size_t	length = toPrint.size();
-	for (size_t i = 0; i < length; i++)
-	{
-		size_t	l = toPrint[i].size();
-		for (size_t j = 0; j < l; j++)
-			std::cout << toPrint[i][j] << " ";
-		std::cout << std::endl;
-	}
-}
-
 std::vector<std::string>	split(std::string& str, const std::string& del)
 {
 	std::vector<std::string>	tokens;

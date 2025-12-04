@@ -1,5 +1,11 @@
 #include "scop.hpp"
 
+static e_line_type	hashit(std::string const& inString);
+static std::string syntax_error = "Syntax error in ";
+static void parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line);
+static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::string> line, unsigned int& index);
+
+
 void	checkArgument(int argc, char *file)
 {
 	if(argc != 2)
@@ -47,15 +53,7 @@ GLFWwindow*	initWindow()
 	return window;
 }
 
-Object initObjet()
-{
-	Object	obj;
-
-
-	return obj;
-}
-
-void processObjFile(char *file, Object& obj)
+void initObjet(char *file, Object& obj)
 {
 	std::vector<Vertex>						pos_vertex;
 	std::vector<std::vector<int>>			fac_vertex;
@@ -63,42 +61,22 @@ void processObjFile(char *file, Object& obj)
 
 	std::ifstream	infile = openFile(file);
 
-	unsigned int	jFac = 0;
-	std::string syntax_error = "Syntax error in ";
+	unsigned int	numFaces = 0;
 	syntax_error += file;
 	for (std::string line; std::getline(infile, line);)
 	{
 		std::vector<std::string>	words = split(line, " ");
-		int size = words.size();
 		switch (hashit(words[0]))
 		{
 			case eComment:
 				continue;
 
 			case eVertex:
-				if (size >= 4)
-				{
-					Vertex pos = { std::stof(words[1]), std::stof(words[2]), std::stof(words[3]) };
-					if (size == 5)
-						pos.w = std::stof(words[4]);
-					else if (size > 5)
-						throw std::invalid_argument(syntax_error);
-					pos.tX = pos.x;
-					pos.tY = pos.y;
-					pos.x /= pos.w;
-					pos.y /= pos.w;
-					pos.z /= pos.w;
-					pos_vertex.push_back(pos);
-				}
-				else
-					throw std::invalid_argument(syntax_error);
+				parseVertex(pos_vertex, words);
 				continue;
 
 			case eFaces:
-				fac_vertex.push_back({});
-				for (unsigned int i = 1; i < words.size(); i++)
-					fac_vertex[jFac].push_back(std::stoi(words[i]));
-				jFac++;
+				parseFaces(fac_vertex, words, numFaces);
 				continue;
 
 			case eMatLib:
@@ -120,7 +98,7 @@ void processObjFile(char *file, Object& obj)
 	obj.createTriangles(pos_vertex, fac_vertex);
 }
 
-e_line_type	hashit(std::string const& inString)
+static e_line_type	hashit(std::string const& inString)
 {
 	if (inString == "#")
 		return eComment;
@@ -142,3 +120,30 @@ e_line_type	hashit(std::string const& inString)
 	return eDefault;
 }
 
+static void parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line)
+{
+	if (line.size() >= 4)
+	{
+		Vertex tmp = { std::stof(line[1]), std::stof(line[2]), std::stof(line[3]) };
+		if (line.size() == 5)
+			tmp.w = std::stof(line[4]);
+		else if (line.size() > 5)
+			throw std::invalid_argument(syntax_error);
+		tmp.tX = tmp.x;
+		tmp.tY = tmp.y;
+		tmp.x /= tmp.w;
+		tmp.y /= tmp.w;
+		tmp.z /= tmp.w;
+		pos.push_back(tmp);
+	}
+	else
+		throw std::invalid_argument(syntax_error);
+}
+
+static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::string> line, unsigned int& index)
+{
+	faces.push_back({});
+	for (unsigned int i = 1; i < line.size(); i++)
+		faces[index].push_back(std::stoi(line[i]));
+	index++;
+}

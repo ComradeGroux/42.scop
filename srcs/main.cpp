@@ -7,7 +7,7 @@ int	main(int argc, char **argv, char **envp)
 	try
 	{
 		checkArgument(argc, argv[1]);
-		processObjFile(argv[1], obj);
+		initObjet(argv[1], obj);
 
 		window = initWindow();
 	}

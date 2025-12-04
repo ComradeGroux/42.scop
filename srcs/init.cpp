@@ -47,6 +47,79 @@ GLFWwindow*	initWindow()
 	return window;
 }
 
+Object initObjet()
+{
+	Object	obj;
+
+
+	return obj;
+}
+
+void processObjFile(char *file, Object& obj)
+{
+	std::vector<Vertex>						pos_vertex;
+	std::vector<std::vector<int>>			fac_vertex;
+	std::string								materialFile;
+
+	std::ifstream	infile = openFile(file);
+
+	unsigned int	jFac = 0;
+	std::string syntax_error = "Syntax error in ";
+	syntax_error += file;
+	for (std::string line; std::getline(infile, line);)
+	{
+		std::vector<std::string>	words = split(line, " ");
+		int size = words.size();
+		switch (hashit(words[0]))
+		{
+			case eComment:
+				continue;
+
+			case eVertex:
+				if (size >= 4)
+				{
+					Vertex pos = { std::stof(words[1]), std::stof(words[2]), std::stof(words[3]) };
+					if (size == 5)
+						pos.w = std::stof(words[4]);
+					else if (size > 5)
+						throw std::invalid_argument(syntax_error);
+					pos.tX = pos.x;
+					pos.tY = pos.y;
+					pos.x /= pos.w;
+					pos.y /= pos.w;
+					pos.z /= pos.w;
+					pos_vertex.push_back(pos);
+				}
+				else
+					throw std::invalid_argument(syntax_error);
+				continue;
+
+			case eFaces:
+				fac_vertex.push_back({});
+				for (unsigned int i = 1; i < words.size(); i++)
+					fac_vertex[jFac].push_back(std::stoi(words[i]));
+				jFac++;
+				continue;
+
+			case eMatLib:
+				materialFile = words[1];
+				continue;
+
+			case eUseMatLib:
+			case eName:
+			case eSmooth:
+			case eDefault:
+				continue;
+			default:
+				std::cerr << "Error: no case for \"" << words[0] << "\"" << std::endl;
+				break;
+		}
+	}
+	infile.close();
+
+	obj.createTriangles(pos_vertex, fac_vertex);
+}
+
 e_line_type	hashit(std::string const& inString)
 {
 	if (inString == "#")
@@ -68,3 +141,4 @@ e_line_type	hashit(std::string const& inString)
 
 	return eDefault;
 }
+

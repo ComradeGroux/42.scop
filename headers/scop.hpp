@@ -1,57 +1,17 @@
 #pragma once
 
-#include <iostream>
-#include <cstring>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
-
-#include "glad.h"
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GLFW/glfw3.h>
-
-#ifndef WIDTH
-# define WIDTH 640
-#endif
-#ifndef HEIGHT
-# define HEIGHT 480
-#endif
-
-#define cgl(x) GLClearError(); x; GLGetError(#x, __FILE__, __LINE__)
-
-#define POSITION_ATTRIB_LOC 0
-#define COLOR_ATTRIB_LOC 1
-enum { POSITION, COLOR, NUM_BUFF };
-
-enum e_line_type {
-	eDefault,
-	eComment,
-	eVertex,
-	eFaces,
-	eName,
-	eMatLib,
-	eUseMatLib,
-	eSmooth
-};
-
-typedef struct t_Vec3 {
-	float x;
-	float y;
-	float z;
-	float w = 1.0;
-} Vec3;
-
+#include "headers.hpp"
+#include "object.hpp"
 
 /**		MAIN		 **/
-void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vec3 a, Vec3 b, Vec3 c, float baseColor);
-void drawSquare(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vec3 a, Vec3 b, Vec3 c, Vec3 d, float baseColor);
+void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, float baseColor);
+void drawSquare(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, Vertex d, float baseColor);
 
 
 /**		INIT	 	 **/
 void						checkArgument(int argc, char *file);
 GLFWwindow*					initWindow();
+void 						processObjFile(char *file, Object& obj);
 e_line_type					hashit(std::string const& inString);
 
 

@@ -10,9 +10,8 @@ void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[N
 
 
 /**		INIT	 	 **/
-void						checkArgument(int argc, char *file);
-GLFWwindow*					initWindow();
-void						initObjet(char *file, Object& obj);
+GLFWwindow*	initWindow(int argc, char** argv, char** envp);
+int			loadObjet(char *file, Object& obj);
 
 
 /**		CALLBACK	 **/

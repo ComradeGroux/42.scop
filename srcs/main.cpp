@@ -1,24 +1,27 @@
 #include "scop.hpp"
 
+void	renderer(GLFWwindow* window, Object& obj);
+
 int	main(int argc, char **argv, char **envp)
 {
-	GLFWwindow*		window;
-	Object			obj;
-	try
-	{
-		checkArgument(argc, argv[1]);
-		initObjet(argv[1], obj);
+	Object		obj;
+	GLFWwindow*	window = initWindow(argc, argv, envp);
 
-		window = initWindow();
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << "Error: " << e.what() << std::endl;
-		return -1;
-	}
+	if (!window)
+		exit(-1);
+	if (loadObjet(argv[1], obj) != 0)
+		exit(-1);
 
+	renderer(window, obj);
 
+	glfwDestroyWindow(window);
+	glfwMakeContextCurrent(nullptr);
+	glfwTerminate();
+	return 0;
+}
 
+void	renderer(GLFWwindow* window, Object& obj)
+{
 	std::vector<Vertex>	tmp = obj.getVertices();
 	std::vector<float>	vectorFloat;
 	for (unsigned int i = 0; i < tmp.size(); i++)
@@ -52,8 +55,8 @@ int	main(int argc, char **argv, char **envp)
 
 	VertexBuffer vb(rawPos, sizeof(rawPos));
 	cgl(glEnableVertexAttribArray(POSITION_ATTRIB_LOC));
-	glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-	
+	cgl(glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0));
+
 	float	colors[12] = {
 		0.5f, 0.05f, 0.05f, 1.0f,
 		0.05f, 0.05f, 0.05f, 1.0f,
@@ -64,44 +67,41 @@ int	main(int argc, char **argv, char **envp)
 	cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
 
 
-	
-
 	IndexBuffer	ib(rawIndex, vectorInt.size());
-	
+
 	std::string vertexShader = readFullFile("shaders/basic.vrt");
 	std::string fragmentShader = readFullFile("shaders/basic.frg");
 	unsigned int program = createShader(vertexShader, fragmentShader);
-	
+
 	cgl(glBindVertexArray(0));
 	cgl(glUseProgram(0));
 	cgl(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	cgl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-	
+
 	int	width = 0;
 	int	height = 0;
 	float r = 0.5f;
 	float increment = 0.05f;
-		while(!glfwWindowShouldClose(window))
+	while(!glfwWindowShouldClose(window))
 	{
-		cgl(glfwGetFramebufferSize(window, &width, &height));
+		glfwGetFramebufferSize(window, &width, &height);
 		cgl(glViewport(0, 0, width, height));
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-		glBindVertexArray(vao);
-		glUseProgram(program);
+		cgl(glBindVertexArray(vao));
+		cgl(glUseProgram(program));
 
 		colors[1] = r;
 		colors[4] = r;
 		colors[6] = r;
 		color.bind();
-		cgl(glBufferData(GL_ARRAY_BUFFER, 12, colors, GL_STATIC_DRAW));
+		cgl(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
 		cgl(glEnableVertexAttribArray(COLOR_ATTRIB_LOC));
 		cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
 
-
 		ib.bind();
 
-		glDrawElements(GL_TRIANGLES, vectorInt.size(), GL_UNSIGNED_INT, nullptr);
+		cgl(glDrawElements(GL_TRIANGLES, vectorInt.size(), GL_UNSIGNED_INT, nullptr));
 
 		if (r > 1.0f)
 			increment = -0.05f;
@@ -109,15 +109,12 @@ int	main(int argc, char **argv, char **envp)
 			increment = 0.05f;
 		r += increment;
 
-		cgl(glfwSwapBuffers(window));
-		cgl(glfwPollEvents());
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	cgl(glDeleteProgram(program));
-	cgl(glfwMakeContextCurrent(nullptr));
-	cgl(glfwDestroyWindow(window));
-	glfwTerminate();
-	return 0;
+	cgl(glDeleteVertexArrays(1, &vao));
 }
 
 void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, float baseColor)

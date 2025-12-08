@@ -21,10 +21,10 @@ class Object {
 		
 		std::string	name;
 
+		unsigned int						_numTriangles;
 
 		std::vector<std::vector<Vertex>>	triangles;
 		unsigned int						fileCountFaces;
-		unsigned int						_numTriangles;
 		Mtl									mtl;
 
 		void	createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<int>> faces);

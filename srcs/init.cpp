@@ -1,12 +1,13 @@
 #include "scop.hpp"
 
-static e_line_type	hashit(std::string const& inString);
 static std::string syntax_error = "Syntax error in ";
+static e_line_type	hashit(std::string const& inString);
 static void parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line);
 static void parseFaces(std::vector<std::vector<int>>& faces, std::vector<std::string> line, unsigned int& index);
 static void parseMatLib(Object& obj, std::string file, std::string path);
+static 		GLFWwindow*	createWindow();
 
-void	checkArgument(int argc, char *file)
+static void	checkArgument(int argc, char *file)
 {
 	if(argc != 2)
 		throw std::invalid_argument("Wrong number of argument");
@@ -16,7 +17,24 @@ void	checkArgument(int argc, char *file)
 		throw std::invalid_argument("Wrong extension (must be .obj)");
 }
 
-GLFWwindow*	initWindow()
+GLFWwindow*	initWindow(int argc, char** argv, char** envp)
+{
+	GLFWwindow*	window;
+	try
+	{
+		checkArgument(argc, argv[1]);
+
+		window = createWindow();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		return nullptr;
+	}
+	return window;
+}
+
+static GLFWwindow*	createWindow()
 {
 	if(glfwInit() != GLFW_TRUE)
 		throw std::runtime_error("GLFW init goes wrong");
@@ -53,7 +71,7 @@ GLFWwindow*	initWindow()
 	return window;
 }
 
-void initObjet(char *file, Object& obj)
+int loadObjet(char *file, Object& obj)
 {
 	std::vector<Vertex>						pos_vertex;
 	std::vector<std::vector<int>>			fac_vertex;
@@ -94,6 +112,7 @@ void initObjet(char *file, Object& obj)
 				continue;
 			default:
 				std::cerr << "Error: no case for \"" << words[0] << "\"" << std::endl;
+				return -1;
 				break;
 		}
 	}
@@ -101,6 +120,8 @@ void initObjet(char *file, Object& obj)
 
 	obj.createTriangles(pos_vertex, fac_vertex);
 	obj.fileCountFaces = countFaces;
+
+	return 0;
 }
 
 static e_line_type	hashit(std::string const& inString)

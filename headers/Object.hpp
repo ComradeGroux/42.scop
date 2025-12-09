@@ -1,17 +1,83 @@
 #pragma once
 
-#include "headers.hpp"
+#include <filesystem>
+#include <vector>
+#include <fstream>
+#include <iostream>
+
+typedef struct t_Vertex {
+	float x, y, z;
+	float tX, tY;
+	float nX, nY, nZ;
+	float w = 1.0;
+} Vertex;
+
+struct Uv {
+	float u, v, w;
+};
+
+struct Ka {
+	float r, g, b;
+};
+
+struct Kd {
+	float r, g, b;
+};
+
+struct Ks {
+	float r, g, b;
+};
+
+struct Mtl
+{
+	Ka ka;
+	Kd kd;
+	Ks ks;
+	float ns, ni, d;
+	int illum;
+	std::string name;
+};
 
 class Object {
 	private:
-		std::vector<Vertex>					_vertices;
-		std::vector<std::vector<int>>		_faces;
-		std::vector<std::vector<Vertex>>	_shapes;
-		std::vector<std::vector<Vertex>>	_squares;
+		enum e_line_type {
+			eDefault,
+			eComment,
+			eVertex,
+			eVertexNormal,
+			eVertexTexture,
+			eFaces,
+			eName,
+			eMatLib,
+			eUseMatLib,
+			eNewMat,
+			eNs,
+			eKa,
+			eKd,
+			eKs,
+			eNi,
+			eD,
+			eIllum,
+			eSmooth
+		};
+
+		std::vector<Vertex>						_vertices;
+		std::vector<std::vector<unsigned int>>	_faces;
+		std::vector<std::vector<Vertex>>		_shapes;
+		std::vector<std::vector<Vertex>>		_squares;
 		
 		void	_createShapes(void);
 		void	_separateTrianglesSquares(void);
 		void	_convertSquaresToTriangles(void);
+
+		void						_parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line);
+		void						_parseFaces(std::vector<std::vector<unsigned int>>& faces, std::vector<std::string> line, unsigned int& index);
+		void						_parseMatLib(std::string file, std::string path);
+		e_line_type					_hashit(std::string const& inString);
+		std::ifstream				_openFile(char *path);
+		std::vector<std::string>	_split(std::string& str, const std::string& del);
+
+
 
 	public:
 		Object(void);
@@ -19,6 +85,8 @@ class Object {
 		Object&	operator=(const Object& src);
 		~Object(void);
 		
+		int load(char *file);
+
 		std::string	name;
 
 		unsigned int						_numTriangles;
@@ -27,9 +95,9 @@ class Object {
 		unsigned int						fileCountFaces;
 		Mtl									mtl;
 
-		void	createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<int>> faces);
+		void	createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces);
 
-		inline std::vector<Vertex>				getVertices(void) const { return _vertices; }
-		inline std::vector<std::vector<int>>	getFaces(void) const { return _faces; }
-		inline int 								getNumberBaseTriangle(void) const { return triangles.size() - _squares.size(); }
+		inline std::vector<Vertex>						getVertices(void) const { return _vertices; }
+		inline std::vector<std::vector<unsigned int>>	getFaces(void) const { return _faces; }
+		inline int 										getNumberBaseTriangle(void) const { return triangles.size() - _squares.size(); }
 };

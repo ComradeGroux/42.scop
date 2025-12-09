@@ -1,23 +1,6 @@
 #include "scop.hpp"
 
-std::vector<std::string>	split(std::string& str, const std::string& del)
-{
-	std::vector<std::string>	tokens;
-	size_t						pos = 0;
-	std::string					tok;
-
-	while ((pos = str.find(del)) != std::string::npos)
-	{
-		tok = str.substr(0, pos);
-		tokens.push_back(tok);
-		str.erase(0, pos + del.length());
-	}
-	tokens.push_back(str);
-
-	return tokens;
-}
-
-std::ifstream	openFile(char *path)
+static std::ifstream	openFile(char *path)
 {
 	std::ifstream infile(path, std::ios::in);
 	if (!infile.is_open())

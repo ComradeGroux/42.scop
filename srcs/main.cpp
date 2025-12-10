@@ -1,5 +1,6 @@
 #include "Object.hpp"
 #include "VertexArray.hpp"
+#include "Shader.hpp"
 
 #include "scop.hpp"
 
@@ -44,14 +45,12 @@ static void	renderer(GLFWwindow* window, Object& obj)
 
 	IndexBuffer	ib(rawIndex, 6);
 
-	std::string vertexShader = readFullFile("shaders/basic.vrt");
-	std::string fragmentShader = readFullFile("shaders/basic.frg");
-	unsigned int program = createShader(vertexShader, fragmentShader);
+	Shader	shader("shaders/basic.shader");
 
 	va.unbind();
-	cgl(glUseProgram(0));
-	cgl(glBindBuffer(GL_ARRAY_BUFFER, 0));
-	cgl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	shader.unbind();
+	vb.unbind();
+	ib.unbind();
 
 	int	width = 0;
 	int	height = 0;
@@ -63,16 +62,13 @@ static void	renderer(GLFWwindow* window, Object& obj)
 		cgl(glViewport(0, 0, width, height));
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-		cgl(glUseProgram(program));
+		shader.bind();
 
 		va.bind();
 		ib.bind();
-
 		cgl(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
-	cgl(glDeleteProgram(program));
 }

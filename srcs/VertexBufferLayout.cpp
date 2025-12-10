@@ -1,8 +1,8 @@
 #include "VertexBufferLayout.hpp"
 
-VertexBufferLayout::VertexBufferLayout(void)
+VertexBufferLayout::VertexBufferLayout(void) : _stride(0)
 {
-	_stride = 0;
+
 }
 
 VertexBufferLayout::~VertexBufferLayout(void)

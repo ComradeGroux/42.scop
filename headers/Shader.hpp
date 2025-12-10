@@ -1,0 +1,38 @@
+#pragma once
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <fstream>
+
+#include "opengl.hpp"
+
+class Shader
+{
+	private:
+		struct ShaderProgramSource {
+			std::string	vertex;
+			std::string	fragment;
+		};
+
+		std::string		_filepath;
+		unsigned int	_rendererId;
+
+		ShaderProgramSource	_parseShader(const std::string& filepath);
+		unsigned int		_createShader(const std::string& vertexShader, const std::string& fragmentShader);
+		unsigned int		_compileShader(unsigned int type, const std::string& source);
+
+
+		int	_getUniformLocation(const std::string& name);
+		// Cache system for Uniforms
+
+	public:
+		Shader(const std::string& filepath);
+		~Shader(void);
+
+		void	bind(void) const;
+		void	unbind(void) const;
+
+		// Set Uniforms
+		void	setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+};

@@ -24,7 +24,7 @@ Object::~Object(void)
 
 }
 
-void	Object::createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces)
+void	Object::_createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces)
 {
 	_vertices = vertices;
 	_faces = faces;
@@ -133,7 +133,7 @@ int Object::load(char *file)
 	}
 	infile.close();
 
-	createTriangles(pos_vertex, fac_vertex);
+	_createTriangles(pos_vertex, fac_vertex);
 	fileCountFaces = countFaces;
 
 

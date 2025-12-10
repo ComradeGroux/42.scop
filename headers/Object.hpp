@@ -61,11 +61,18 @@ class Object {
 			eSmooth
 		};
 
-		std::vector<Vertex>						_vertices;
-		std::vector<std::vector<unsigned int>>	_faces;
+		std::vector<Vertex>						_vertices;	// List of vertex from obj files
+		std::vector<std::vector<unsigned int>>	_faces;		// List of faces from obj files
+
+
+		// List of shapes (vertexes that are members of multiples faces are duplicated)
+		// This is absolutly not optimal nor performant. Will use an IndexBuffer to create faces by referencing each vertex
 		std::vector<std::vector<Vertex>>		_shapes;
+		// Contains only the squares from _shapes. This is not optimal too and will be replaced
 		std::vector<std::vector<Vertex>>		_squares;
 		
+
+		void	_createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces);
 		void	_createShapes(void);
 		void	_separateTrianglesSquares(void);
 		void	_convertSquaresToTriangles(void);
@@ -95,7 +102,6 @@ class Object {
 		unsigned int						fileCountFaces;
 		Mtl									mtl;
 
-		void	createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces);
 
 		inline std::vector<Vertex>						getVertices(void) const { return _vertices; }
 		inline std::vector<std::vector<unsigned int>>	getFaces(void) const { return _faces; }

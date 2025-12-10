@@ -48,7 +48,7 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	std::string fragmentShader = readFullFile("shaders/basic.frg");
 	unsigned int program = createShader(vertexShader, fragmentShader);
 
-	cgl(glBindVertexArray(0));
+	va.unbind();
 	cgl(glUseProgram(0));
 	cgl(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	cgl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));

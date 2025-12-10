@@ -55,6 +55,9 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	int	width = 0;
 	int	height = 0;
 
+	float r = 0.5f;
+	float inc = 0.02f;
+
 	std::cout << "RENDERING STARTED" << std::endl;
 	while(!glfwWindowShouldClose(window))
 	{
@@ -63,10 +66,17 @@ static void	renderer(GLFWwindow* window, Object& obj)
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 		shader.bind();
+		shader.setUniform4f("u_color", r, 0.0f, r, 0.0f);
 
 		va.bind();
 		ib.bind();
 		cgl(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+
+		if (r > 1.0f)
+			inc = -0.02f;
+		else if (r < 0.0f)
+			inc = 0.02f;
+		r += inc;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

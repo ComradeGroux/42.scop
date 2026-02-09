@@ -61,16 +61,15 @@ class Object {
 			eSmooth
 		};
 
-		std::vector<Vertex>						_vertices;	// List of vertex from obj files
-		std::vector<std::vector<unsigned int>>	_faces;		// List of faces from obj files
-
+		std::vector<Vertex>						_vertices;			// List of vertex from obj files
+		std::vector<std::vector<unsigned int>>	_faces;				// List of faces from obj files
 
 		// List of shapes (vertexes that are members of multiples faces are duplicated)
 		// This is absolutly not optimal nor performant. Will use an IndexBuffer to create faces by referencing each vertex
 		std::vector<std::vector<Vertex>>		_shapes;
 		// Contains only the squares from _shapes. This is not optimal too and will be replaced
 		std::vector<std::vector<Vertex>>		_squares;
-		
+
 
 		void	_createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces);
 		void	_createShapes(void);
@@ -87,6 +86,9 @@ class Object {
 
 
 	public:
+		std::vector<unsigned int>	_facesAllTriangles; // List of faces from obj files (squares are split in 2 triangles)
+
+
 		Object(void);
 		Object(const Object& src);
 		Object&	operator=(const Object& src);

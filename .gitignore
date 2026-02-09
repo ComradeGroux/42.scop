@@ -43,3 +43,4 @@ build/
 scop
 old
 .vscode/
+test*

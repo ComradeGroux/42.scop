@@ -5,6 +5,7 @@
 #include "scop.hpp"
 
 static void	renderer(GLFWwindow* window, Object& obj);
+static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -26,24 +27,40 @@ int	main(int argc, char **argv, char **envp)
 
 static void	renderer(GLFWwindow* window, Object& obj)
 {
-	float rawPos[12] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f
-	};
-	unsigned int rawIndex[6] = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
 	VertexArray			va;
-	VertexBuffer		vb(rawPos, 4 * 3 * sizeof(float));
+	std::vector<float>	vFloat;
+	std::vector<Vertex> vertices = obj.getVertices();
+	for (unsigned int i = 0; i < vertices.size(); i++)
+	{
+		vFloat.push_back(vertices[i].x);
+		vFloat.push_back(vertices[i].y);
+		vFloat.push_back(vertices[i].z);
+	}
+	VertexBuffer		vb(vFloat.data(), vFloat.size() * sizeof(float));
 	VertexBufferLayout	layout;
 	layout.push<float>(3);
 	va.addBuffer(vb, layout);
+	IndexBuffer		ib(obj._facesAllTriangles.data(), obj._facesAllTriangles.size());
 
-	IndexBuffer	ib(rawIndex, 6);
+	// float rawPos[3 * 6] = {
+	// 	-1.0f, -0.75f,	0.0f,
+	// 	 0.0f, -0.75f,	0.0f,
+	// 	 1.0f, -0.75f,	0.0f,
+	// 	-0.5f,	0.0f,	0.0f,
+	// 	 0.5f,	0.0f,	0.0f,
+	// 	 0.0f,	0.75f,	0.0f
+	// };
+	// unsigned int rawIndex[9] = {
+	// 	0, 1, 3,
+	// 	1, 2, 4,
+	// 	3, 4, 5
+	// };
+	// VertexArray			va;
+	// VertexBuffer		vb(rawPos, sizeof(rawPos));
+	// VertexBufferLayout	layout;
+	// layout.push<float>(3);
+	// va.addBuffer(vb, layout);
+	// IndexBuffer	ib(rawIndex, (sizeof(rawIndex) / sizeof(unsigned int)));
 
 	Shader	shader("shaders/basic.shader");
 
@@ -52,32 +69,72 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	vb.unbind();
 	ib.unbind();
 
+	for (unsigned int i = 0; i < obj._facesAllTriangles.size(); i++)
+	{
+		std::cout << obj._facesAllTriangles[i] << " ";
+		if (i % 3 == 2)
+			std::cout << std::endl;
+	}
+
+	std::cout << "total triangles " << ib.getCount() / 3 << "\ttotal faces points " << ib.getCount() << std::endl;
+	renderLoopIB(window, &shader, &va, &ib);
+}
+
+void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib)
+{
+	std::cout << "Rendering loop started" << std::endl;
+
 	int	width = 0;
 	int	height = 0;
-
 	float r = 0.5f;
 	float inc = 0.02f;
 
-	std::cout << "RENDERING STARTED" << std::endl;
-	while(!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window))
 	{
 		glfwGetFramebufferSize(window, &width, &height);
 		cgl(glViewport(0, 0, width, height));
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-		shader.bind();
-		shader.setUniform4f("u_color", r, 0.0f, r, 0.0f);
+		shader->bind();
+		shader->setUniform4f("u_color", r, 0.0f, r, 0.0f);
 
-		va.bind();
-		ib.bind();
-		cgl(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+		va->bind();
+		ib->bind();
+		cgl(glDrawElements(GL_TRIANGLES, ib->getCount(), GL_UNSIGNED_INT, nullptr));
 
 		if (r > 1.0f)
 			inc = -0.02f;
-		else if (r < 0.0f)
+		else if (r < 0.1f)
 			inc = 0.02f;
 		r += inc;
 
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+
+void	renderLoopClassic(GLFWwindow *window, Shader* shader)
+{
+	std::cout << "Rendering loop started" << std::endl;
+
+	int	width = 0;
+	int	height = 0;
+	float r = 0.5f;
+	float inc = 0.02f;
+
+	while (!glfwWindowShouldClose(window))
+	{
+		glfwGetFramebufferSize(window, &width, &height);
+		cgl(glViewport(0, 0, width, height));
+		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+
+		if (r > 1.0f)
+			inc = -0.02f;
+		else if (r < 0.1f)
+			inc = 0.02f;
+		r += inc;
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

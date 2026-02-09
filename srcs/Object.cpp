@@ -41,8 +41,30 @@ void	Object::_createShapes(void)
 		if (_faces[i].size() >= 3)
 		{
 			std::vector<Vertex> shape;
+			if (_faces[i].size() == 4)
+			{
+				_facesAllTriangles.push_back(_faces[i][0]);
+				_facesAllTriangles.push_back(_faces[i][1]);
+				_facesAllTriangles.push_back(_faces[i][2]);
+
+				_facesAllTriangles.push_back(_faces[i][0]);
+				_facesAllTriangles.push_back(_faces[i][2]);
+				_facesAllTriangles.push_back(_faces[i][3]);
+			}
+			else if (_faces[i].size() == 3)
+			{
+				_facesAllTriangles.push_back(_faces[i][0]);
+				_facesAllTriangles.push_back(_faces[i][1]);
+				_facesAllTriangles.push_back(_faces[i][2]);
+			}
+			else
+				std::cerr << "faces not 4 or 3" << std::endl;
+
+
 			for (unsigned int j = 0; j < _faces[i].size(); j++)
+			{
 				shape.push_back(_vertices[_faces[i][j]]);
+			}
 			_shapes.push_back(shape);
 		}
 		else

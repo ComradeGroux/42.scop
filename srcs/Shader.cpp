@@ -31,6 +31,11 @@ void	Shader::setUniform1f(const std::string& name, float v)
 	cgl(glUniform1f(_getUniformLocation(name), v));
 }
 
+void	Shader::setUniform1i(const std::string& name, int v)
+{
+	cgl(glUniform1i(_getUniformLocation(name), v));
+}
+
 void	Shader::setUniformMatrix4f(const std::string& name, mat4 v)
 {
 	cgl(glUniformMatrix4fv(_getUniformLocation(name), 1, GL_FALSE, v));

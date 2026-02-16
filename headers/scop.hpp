@@ -1,14 +1,16 @@
 #pragma once
 
 #include <filesystem>
-// #include <vector>
 #include <fstream>
 #include <iostream>
 
 #include "headers.hpp"
-// #include "Object.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
+
+#include "Object.hpp"
+#include "Shader.hpp"
+#include "Camera.hpp"
 
 /**		MAIN		 **/
 
@@ -29,3 +31,5 @@ unsigned int	createShader(const std::string& vertexShader, const std::string& fr
 
 /**		UTILS		 **/
 std::string					readFullFile(std::string path);
+
+void	keyPressHandler(GLFWwindow* window, Camera* camera, Object* obj, Shader* shader);

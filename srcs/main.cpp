@@ -67,11 +67,12 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 		cgl(glViewport(0, 0, width, height));
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+		keyPressHandler(window, camera, obj, shader);
+
 		angle = glfwGetTime();
 		mat4_rotate(obj->model, angle, 0.0f, 1.0f, 0.0f);
 
 		shader->bind();
-		shader->setRenderMode(Shader::WIREFRAME);
 
 		shader->setModel(obj->model);
 		shader->setView(camera->getViewMatrix());

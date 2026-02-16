@@ -44,8 +44,6 @@ int	Shader::_getUniformLocation(const std::string& name)
 	return location;
 }
 
-
-
 Shader::ShaderProgramSource	Shader::_parseShader(const std::string& filepath)
 {
 	std::ifstream	stream(filepath);
@@ -123,4 +121,20 @@ unsigned int	Shader::_compileShader(unsigned int type, const std::string& source
 	}
 
 	return id;
+}
+
+void	Shader::setRenderMode(e_render_mode mode)
+{
+	if (mode == WIREFRAME)
+	{
+		cgl(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+	}
+	else if (mode == POINT)
+	{
+		cgl(glPolygonMode(GL_FRONT_AND_BACK, GL_POINT));
+	}
+	else
+	{
+		cgl(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+	}
 }

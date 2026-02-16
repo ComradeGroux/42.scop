@@ -76,6 +76,7 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 		mat4_perspective(projection, deg_to_radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 
 		shader->bind();
+		shader->setRenderMode(Shader::POINT);
 		shader->setUniformMatrix4f("model", model);
 		shader->setUniformMatrix4f("view", view);
 		shader->setUniformMatrix4f("projection", projection);

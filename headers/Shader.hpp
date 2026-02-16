@@ -30,8 +30,16 @@ class Shader
 		Shader(const std::string& filepath);
 		~Shader(void);
 
+		enum e_render_mode {
+			WIREFRAME,
+			POINT,
+			FILLED
+		};
+
 		void	bind(void) const;
 		void	unbind(void) const;
+
+		void	setRenderMode(e_render_mode mode);
 
 		void	setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 		void	setUniform1f(const std::string& name, float v);

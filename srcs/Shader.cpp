@@ -123,6 +123,22 @@ unsigned int	Shader::_compileShader(unsigned int type, const std::string& source
 	return id;
 }
 
+void	Shader::setModel(mat4 model)
+{
+	setUniformMatrix4f("model", model);
+}
+
+void	Shader::setView(mat4 view)
+{
+	setUniformMatrix4f("view", view);
+}
+
+void	Shader::setPerspective(mat4 projection, float fov_radian, float near, float far, int window_width, int window_height)
+{
+	mat4_perspective(projection, deg_to_radians(45.0f), (float)window_width / (float)window_height, near, far);
+	setUniformMatrix4f("projection", projection);
+}
+
 void	Shader::setRenderMode(e_render_mode mode)
 {
 	if (mode == WIREFRAME)

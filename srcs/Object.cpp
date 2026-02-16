@@ -7,6 +7,7 @@ Object::Object(void)
 	fileCountFaces = 0;
 	_numTriangles = 0;
 	name = "";
+	mat4_identity(model);
 }
 
 Object::Object(const Object& src)

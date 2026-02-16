@@ -1,11 +1,12 @@
 #include "Object.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
+#include "Camera.hpp"
 
 #include "scop.hpp"
 
 static void	renderer(GLFWwindow* window, Object& obj);
-static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib);
+static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib, Object* obj, Camera* camera);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -28,6 +29,7 @@ int	main(int argc, char **argv, char **envp)
 static void	renderer(GLFWwindow* window, Object& obj)
 {
 	VertexArray			va;
+	Camera				camera;
 	std::vector<float>	vFloat;
 	std::vector<Vertex> vertices = obj.getVertices();
 	for (unsigned int i = 0; i < vertices.size(); i++)
@@ -49,19 +51,14 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	vb.unbind();
 	ib.unbind();
 
-	renderLoopIB(window, &shader, &va, &ib);
+	camera.setPosition(vec3(0.0f, 0.0f, 5.0f));
+	renderLoopIB(window, &shader, &va, &ib, &obj, &camera);
 }
 
-static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib)
+static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib, Object* obj, Camera* camera)
 {
 	int	width = 0;
 	int	height = 0;
-
-	mat4	model;
-	mat4_identity(model);
-	mat4	view;
-	mat4	projection;
-
 
 	float angle = 0.0;
 	while (!glfwWindowShouldClose(window))
@@ -71,15 +68,14 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 		angle = glfwGetTime();
-		mat4_rotate(model, angle, 0.0f, 1.0f, 0.0f);
-		mat4_look_at(view, vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-		mat4_perspective(projection, deg_to_radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+		mat4_rotate(obj->model, angle, 0.0f, 1.0f, 0.0f);
 
 		shader->bind();
-		shader->setRenderMode(Shader::POINT);
-		shader->setUniformMatrix4f("model", model);
-		shader->setUniformMatrix4f("view", view);
-		shader->setUniformMatrix4f("projection", projection);
+		shader->setRenderMode(Shader::WIREFRAME);
+
+		shader->setModel(obj->model);
+		shader->setView(camera->getViewMatrix());
+		shader->setPerspective(camera->getProjection(), deg_to_radians(45.0f), 0.1f, 100.0f, width, height);
 
 		va->bind();
 		ib->bind();

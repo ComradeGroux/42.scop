@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "glMath.hpp"
+
 #define NORMALIZE_TO 2.0f
 
 typedef struct t_Vertex {
@@ -99,7 +101,7 @@ class Object {
 
 	public:
 		std::vector<unsigned int>	_facesAllTriangles; // List of faces from obj files (squares are split in 2 triangles)
-
+		mat4						model;
 
 		Object(void);
 		Object(const Object& src);

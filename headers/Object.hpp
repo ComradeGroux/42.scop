@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+#define NORMALIZE_TO 2.0f
+
 typedef struct t_Vertex {
 	float x, y, z;
 	float tX, tY;
@@ -61,6 +63,13 @@ class Object {
 			eSmooth
 		};
 
+		struct BoundingBox
+		{
+			float centerX, centerY, centerZ;
+			float sizeX, sizeY, sizeZ;
+			float maxSize;
+		};
+		
 		std::vector<Vertex>						_vertices;			// List of vertex from obj files
 		std::vector<std::vector<unsigned int>>	_faces;				// List of faces from obj files
 
@@ -71,10 +80,13 @@ class Object {
 		std::vector<std::vector<Vertex>>		_squares;
 
 
-		void	_createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces);
-		void	_createShapes(void);
-		void	_separateTrianglesSquares(void);
-		void	_convertSquaresToTriangles(void);
+		void		_createTriangles(std::vector<Vertex> vertices, std::vector<std::vector<unsigned int>> faces);
+		void		_createShapes(void);
+		void		_separateTrianglesSquares(void);
+		void		_convertSquaresToTriangles(void);
+		void		_centerAndNormalize(void);
+		BoundingBox	_calculateBoundingBox(void);
+
 
 		void						_parseVertex(std::vector<Vertex>& pos, std::vector<std::string> line);
 		void						_parseFaces(std::vector<std::vector<unsigned int>>& faces, std::vector<std::string> line, unsigned int& index);
@@ -97,12 +109,12 @@ class Object {
 		int load(char *file);
 
 		std::string	name;
+		Mtl			mtl;
 
 		unsigned int						_numTriangles;
 
 		std::vector<std::vector<Vertex>>	triangles;
 		unsigned int						fileCountFaces;
-		Mtl									mtl;
 
 
 		inline std::vector<Vertex>						getVertices(void) const { return _vertices; }

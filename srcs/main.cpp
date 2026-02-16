@@ -42,26 +42,6 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	va.addBuffer(vb, layout);
 	IndexBuffer		ib(obj._facesAllTriangles.data(), obj._facesAllTriangles.size());
 
-	// float rawPos[3 * 6] = {
-	// 	-1.0f, -0.75f,	0.0f,
-	// 	 0.0f, -0.75f,	0.0f,
-	// 	 1.0f, -0.75f,	0.0f,
-	// 	-0.5f,	0.0f,	0.0f,
-	// 	 0.5f,	0.0f,	0.0f,
-	// 	 0.0f,	0.75f,	0.0f
-	// };
-	// unsigned int rawIndex[9] = {
-	// 	0, 1, 3,
-	// 	1, 2, 4,
-	// 	3, 4, 5
-	// };
-	// VertexArray			va;
-	// VertexBuffer		vb(rawPos, sizeof(rawPos));
-	// VertexBufferLayout	layout;
-	// layout.push<float>(3);
-	// va.addBuffer(vb, layout);
-	// IndexBuffer	ib(rawIndex, (sizeof(rawIndex) / sizeof(unsigned int)));
-
 	Shader	shader("shaders/basic.shader");
 
 	va.unbind();
@@ -69,73 +49,43 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	vb.unbind();
 	ib.unbind();
 
-	for (unsigned int i = 0; i < obj._facesAllTriangles.size(); i++)
-	{
-		std::cout << obj._facesAllTriangles[i] << " ";
-		if (i % 3 == 2)
-			std::cout << std::endl;
-	}
-
-	std::cout << "total triangles " << ib.getCount() / 3 << "\ttotal faces points " << ib.getCount() << std::endl;
 	renderLoopIB(window, &shader, &va, &ib);
 }
 
-void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib)
+static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib)
 {
-	std::cout << "Rendering loop started" << std::endl;
-
 	int	width = 0;
 	int	height = 0;
-	float r = 0.5f;
-	float inc = 0.02f;
 
+	mat4	model;
+	mat4_identity(model);
+	mat4	view;
+	mat4	projection;
+
+
+	float angle = 0.0;
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwGetFramebufferSize(window, &width, &height);
 		cgl(glViewport(0, 0, width, height));
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+		angle = glfwGetTime();
+		mat4_rotate(model, angle, 0.0f, 1.0f, 0.0f);
+		mat4_look_at(view, vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+		mat4_perspective(projection, deg_to_radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
 		shader->bind();
-		shader->setUniform4f("u_color", r, 0.0f, r, 0.0f);
+		shader->setUniformMatrix4f("model", model);
+		shader->setUniformMatrix4f("view", view);
+		shader->setUniformMatrix4f("projection", projection);
 
 		va->bind();
 		ib->bind();
 		cgl(glDrawElements(GL_TRIANGLES, ib->getCount(), GL_UNSIGNED_INT, nullptr));
 
-		if (r > 1.0f)
-			inc = -0.02f;
-		else if (r < 0.1f)
-			inc = 0.02f;
-		r += inc;
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 }
 
-void	renderLoopClassic(GLFWwindow *window, Shader* shader)
-{
-	std::cout << "Rendering loop started" << std::endl;
-
-	int	width = 0;
-	int	height = 0;
-	float r = 0.5f;
-	float inc = 0.02f;
-
-	while (!glfwWindowShouldClose(window))
-	{
-		glfwGetFramebufferSize(window, &width, &height);
-		cgl(glViewport(0, 0, width, height));
-		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-
-		if (r > 1.0f)
-			inc = -0.02f;
-		else if (r < 0.1f)
-			inc = 0.02f;
-		r += inc;
-		
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-}

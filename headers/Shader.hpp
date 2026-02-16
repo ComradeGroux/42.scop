@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 
+#include "glMath.hpp"
 #include "opengl.hpp"
 
 class Shader
@@ -24,7 +25,6 @@ class Shader
 
 
 		int	_getUniformLocation(const std::string& name);
-		// Cache system for Uniforms
 
 	public:
 		Shader(const std::string& filepath);
@@ -33,6 +33,7 @@ class Shader
 		void	bind(void) const;
 		void	unbind(void) const;
 
-		// Set Uniforms
 		void	setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+		void	setUniform1f(const std::string& name, float v);
+		void	setUniformMatrix4f(const std::string& name, mat4 v);
 };

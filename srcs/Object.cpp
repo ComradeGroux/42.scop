@@ -28,7 +28,7 @@ void	Object::_createTriangles(std::vector<Vertex> vertices, std::vector<std::vec
 {
 	_vertices = vertices;
 	_faces = faces;
-	
+
 	_createShapes();
 	_separateTrianglesSquares();
 	_convertSquaresToTriangles();
@@ -110,6 +110,8 @@ int Object::load(char *file)
 
 	std::ifstream	infile = _openFile(file);
 
+	
+
 	unsigned int	countFaces = 0;
 	syntax_error += file;
 	for (std::string line; std::getline(infile, line);)
@@ -154,10 +156,12 @@ int Object::load(char *file)
 		}
 	}
 	infile.close();
-
+	
 	_createTriangles(pos_vertex, fac_vertex);
-	fileCountFaces = countFaces;
 
+	_centerAndNormalize();
+
+	fileCountFaces = countFaces;
 
 	return 0;
 }
@@ -299,4 +303,58 @@ std::ifstream	Object::_openFile(char *path)
 	if (!infile.is_open())
 		throw std::runtime_error("File does not exist");
 	return infile;
+}
+
+Object::BoundingBox	Object::_calculateBoundingBox(void)
+{
+	BoundingBox box;
+
+	float	minX = std::numeric_limits<float>::max();
+	float	maxX = std::numeric_limits<float>::lowest();
+	float	minY = std::numeric_limits<float>::max();
+	float	maxY = std::numeric_limits<float>::lowest();
+	float	minZ = std::numeric_limits<float>::max();
+	float	maxZ = std::numeric_limits<float>::lowest();
+
+	for (const auto& v : _vertices)
+	{
+		if (v.x < minX) minX = v.x;
+		if (v.x > maxX) maxX = v.x;
+		if (v.y < minY) minY = v.y;
+		if (v.y > maxY) maxY = v.y;
+		if (v.z < minZ) minZ = v.z;
+		if (v.z > maxZ) maxZ = v.z;
+	}
+
+	box.centerX = (maxX + minX) / 2.0f;
+	box.centerY = (maxY + minY) / 2.0f;
+	box.centerZ = (maxZ + minZ) / 2.0f;
+
+	box.sizeX = maxX - minX;
+	box.sizeY = maxY - minY;
+	box.sizeZ = maxZ - minZ;
+
+	box.maxSize = box.sizeX;
+	if (box.maxSize < box.sizeY)
+		box.maxSize = box.sizeY;
+	if (box.maxSize < box.sizeZ)
+		box.maxSize = box.sizeZ;
+
+	return box;
+}
+
+void	Object::_centerAndNormalize(void)
+{
+	BoundingBox	box = _calculateBoundingBox();
+
+	for (auto& v : _vertices)
+	{
+		v.x -= box.centerX;
+		v.y -= box.centerY;
+		v.z -= box.centerZ;
+
+		v.x /= (box.maxSize / NORMALIZE_TO);
+		v.y /= (box.maxSize / NORMALIZE_TO);
+		v.z /= (box.maxSize / NORMALIZE_TO);
+	}
 }

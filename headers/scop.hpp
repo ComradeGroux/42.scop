@@ -12,6 +12,13 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 
+
+typedef	struct State {
+	bool	autorotate;
+	bool	textured;
+	float	oldTime;
+} State;
+
 /**		MAIN		 **/
 
 

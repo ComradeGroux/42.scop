@@ -138,9 +138,9 @@ void	Shader::setView(mat4 view)
 	setUniformMatrix4f("view", view);
 }
 
-void	Shader::setPerspective(mat4 projection, float fov_radian, float near, float far, int window_width, int window_height)
+void	Shader::setPerspective(mat4 projection, float fov_degree, float near, float far, int window_width, int window_height)
 {
-	mat4_perspective(projection, deg_to_radians(45.0f), (float)window_width / (float)window_height, near, far);
+	mat4_perspective(projection, deg_to_radians(fov_degree), (float)window_width / (float)window_height, near, far);
 	setUniformMatrix4f("projection", projection);
 }
 

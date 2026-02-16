@@ -29,7 +29,6 @@ int	main(int argc, char **argv, char **envp)
 static void	renderer(GLFWwindow* window, Object& obj)
 {
 	VertexArray			va;
-	Camera				camera;
 	std::vector<float>	vFloat;
 	std::vector<Vertex> vertices = obj.getVertices();
 	for (unsigned int i = 0; i < vertices.size(); i++)
@@ -51,16 +50,19 @@ static void	renderer(GLFWwindow* window, Object& obj)
 	vb.unbind();
 	ib.unbind();
 
-	camera.setPosition(vec3(0.0f, 0.0f, 5.0f));
+	Camera				camera;
+	camera.setPosition(vec3(0.0f, 0.0f, 2.0f));
 	renderLoopIB(window, &shader, &va, &ib, &obj, &camera);
 }
 
 static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib, Object* obj, Camera* camera)
 {
-	int	width = 0;
-	int	height = 0;
+	int		width = 0;
+	int		height = 0;
 
-	float angle = 0.0;
+	State	state = { true, false, 0.0f };
+	glfwSetWindowUserPointer(window, &state);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwGetFramebufferSize(window, &width, &height);
@@ -68,15 +70,21 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 		keyPressHandler(window, camera, obj, shader);
-
-		angle = glfwGetTime();
-		mat4_rotate(obj->model, angle, 0.0f, 1.0f, 0.0f);
-
 		shader->bind();
+
+		if (state.autorotate)
+		{
+			float angle = glfwGetTime() - state.oldTime;
+			mat4_rotate(obj->model, angle, 0.0f, 1.0f, 0.0f);
+		}
+		if (state.textured)
+			shader->setUniform1i("textured", 1);
+		else
+			shader->setUniform1i("textured", 0);
 
 		shader->setModel(obj->model);
 		shader->setView(camera->getViewMatrix());
-		shader->setPerspective(camera->getProjection(), deg_to_radians(45.0f), 0.1f, 100.0f, width, height);
+		shader->setPerspective(camera->getProjection(), 80.0f, 0.1f, 100.0f, width, height);
 
 		va->bind();
 		ib->bind();

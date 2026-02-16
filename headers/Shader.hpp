@@ -43,7 +43,7 @@ class Shader
 
 		void	setModel(mat4 model);
 		void	setView(mat4 view);
-		void	setPerspective(mat4 projection, float fov_radian, float near, float far, int window_width, int window_height);
+		void	setPerspective(mat4 projection, float fov_degree, float near, float far, int window_width, int window_height);
 
 		void	setRenderMode(e_render_mode mode);
 

@@ -21,5 +21,12 @@ out vec4 color;
 
 void main()
 {
-	color = vec4(0.5, 0.5, 0.5, 1.0);
+	float variation = fract(float(gl_PrimitiveID) * 0.618033988749895);
+	float brightness = 0.7 + variation * 0.6;
+
+	vec3 finalColor = vec3(0.5, 0.5, 0.5) * brightness;
+
+	finalColor = clamp(finalColor, 0.0, 1.0);
+
+	color = vec4(finalColor, 1.0);
 }

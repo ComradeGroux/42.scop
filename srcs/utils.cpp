@@ -67,9 +67,6 @@ GLuint loadBMP(const char* filepath)
 	memcpy(&imageSize,		&header[0x22], 4);
 	memcpy(&bitsPerPixel,	&header[0x1C], 2);
 
-	std::cout << "BMP chargé: " << width << "x" << height << std::endl;
-	std::cout << "Taille image: " << imageSize << std::endl;
-
 	if (bitsPerPixel != 24)
 	{
 		std::cerr << "BMP 32 bits detected" << std::endl;
@@ -107,6 +104,5 @@ GLuint loadBMP(const char* filepath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	delete[] data;
-	std::cout << "Texture ID créée: " << textureID << std::endl;
 	return textureID;
 }

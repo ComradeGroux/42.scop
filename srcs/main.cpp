@@ -65,6 +65,7 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 	glfwSetWindowUserPointer(window, &state);
 
 	GLuint	textureID = loadBMP("resources/cat.bmp");
+	float	blend = 0.0f;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -87,9 +88,16 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 			mat4_rotate(obj->model, angle, 0.0f, 1.0f, 0.0f);
 		}
 		if (state.textured)
-			shader->setUniform1i("textured", 1);
+		{
+			if (blend < 1.0f)
+				blend += 0.05f;
+		}
 		else
-			shader->setUniform1i("textured", 0);
+		{
+			if (blend > 0.0f)
+				blend -= 0.05f;
+		}
+		shader->setUniform1f("u_blend", blend);
 
 		shader->setModel(obj->model);
 		shader->setView(camera->getViewMatrix());

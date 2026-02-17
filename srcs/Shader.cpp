@@ -133,7 +133,7 @@ void	Shader::setTexture(GLuint textureID)
 {
 	cgl(glActiveTexture(GL_TEXTURE0 + textureID));
 	cgl(glBindTexture(GL_TEXTURE_2D, textureID));
-	setUniform1i("textureSampler", textureID);
+	setUniform1i("u_textureSampler", textureID);
 }
 
 void	Shader::setModel(mat4 model)

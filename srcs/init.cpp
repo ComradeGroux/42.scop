@@ -62,6 +62,7 @@ static GLFWwindow*	createWindow()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_BLEND);
 	glDebugMessageCallback(debug_callback, nullptr);
 
 	return window;

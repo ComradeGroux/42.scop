@@ -61,11 +61,11 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 	int		width = 0;
 	int		height = 0;
 
-	State	state = { true, false, 0.0f };
+	State	state = { true, false, 0.0f, false };
 	glfwSetWindowUserPointer(window, &state);
 
 	GLuint	textureID = loadBMP("resources/cat.bmp");
-	shader->bind();
+	// shader->bind();
 	shader->setTexture(textureID);
 
 	while (!glfwWindowShouldClose(window))
@@ -75,6 +75,11 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 		keyPressHandler(window, camera, obj, shader);
+		if (state.renderMode)
+		{
+			keyPress_PolygonMode(window, shader);
+			state.renderMode = false;
+		}
 		shader->bind();
 
 		if (state.autorotate)

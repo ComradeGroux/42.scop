@@ -12,6 +12,13 @@
 
 class Shader
 {
+	public:
+		enum e_render_mode {
+			WIREFRAME,
+			POINT,
+			FILLED
+		};
+
 	private:
 		struct ShaderProgramSource {
 			std::string	vertex;
@@ -27,16 +34,12 @@ class Shader
 
 		int	_getUniformLocation(const std::string& name);
 
+		e_render_mode	_actualRenderMode;
+
 
 	public:
 		Shader(const std::string& filepath);
 		~Shader(void);
-
-		enum e_render_mode {
-			WIREFRAME,
-			POINT,
-			FILLED
-		};
 
 		void	bind(void) const;
 		void	unbind(void) const;
@@ -46,7 +49,8 @@ class Shader
 		void	setView(mat4 view);
 		void	setPerspective(mat4 projection, float fov_degree, float near, float far, int window_width, int window_height);
 
-		void	setRenderMode(e_render_mode mode);
+		void			setRenderMode(e_render_mode mode);
+		e_render_mode	getRenderMode(void) const;
 
 		void	setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 		void	setUniform1f(const std::string& name, float v);

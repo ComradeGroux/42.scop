@@ -4,6 +4,7 @@ Shader::Shader(const std::string& filepath) : _filepath(filepath), _rendererId(0
 {
 	ShaderProgramSource	src = _parseShader(filepath);
 	_rendererId = _createShader(src.vertex, src.fragment);
+	setRenderMode(Shader::FILLED);
 }
 
 Shader::~Shader(void)
@@ -156,13 +157,21 @@ void	Shader::setRenderMode(e_render_mode mode)
 	if (mode == WIREFRAME)
 	{
 		cgl(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+		_actualRenderMode = Shader::WIREFRAME;
 	}
 	else if (mode == POINT)
 	{
 		cgl(glPolygonMode(GL_FRONT_AND_BACK, GL_POINT));
+		_actualRenderMode = Shader::POINT;
 	}
 	else
 	{
 		cgl(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+		_actualRenderMode = Shader::FILLED;
 	}
+}
+
+Shader::e_render_mode	Shader::getRenderMode(void) const
+{
+	return _actualRenderMode;
 }

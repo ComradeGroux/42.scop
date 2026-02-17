@@ -17,6 +17,7 @@ typedef	struct State {
 	bool	autorotate;
 	bool	textured;
 	float	oldTime;
+	bool	renderMode;
 } State;
 
 /**		MAIN		 **/
@@ -42,3 +43,4 @@ GLuint		loadBMP(const char* filepath);
 
 
 void	keyPressHandler(GLFWwindow* window, Camera* camera, Object* obj, Shader* shader);
+void	keyPress_PolygonMode(GLFWwindow* window, Shader* shader);

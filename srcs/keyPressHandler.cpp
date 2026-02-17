@@ -7,23 +7,32 @@
 #include "opengl.hpp"
 #include "glMath.hpp"
 
-static	void	keyPress_PolygonMode(GLFWwindow* window, Shader* shader);
 static	void	keyPress_MoveObject(GLFWwindow* window, Object* obj);
 
 void	keyPressHandler(GLFWwindow* window, Camera* camera, Object* obj, Shader* shader)
 {
-	keyPress_PolygonMode(window, shader);
 	keyPress_MoveObject(window, obj);
 }
 
 void	keyPress_PolygonMode(GLFWwindow* window, Shader* shader)
 {
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-		shader->setRenderMode(Shader::FILLED);
-	else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-		shader->setRenderMode(Shader::WIREFRAME);
-	else if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-		shader->setRenderMode(Shader::POINT);
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		switch (shader->getRenderMode())
+		{
+			case Shader::FILLED:
+			shader->setRenderMode(Shader::WIREFRAME);
+			break;
+
+			case Shader::WIREFRAME:
+			shader->setRenderMode(Shader::POINT);
+			break;
+
+			default:
+			shader->setRenderMode(Shader::FILLED);
+			break;
+		}
+	}
 }
 
 void	keyPress_MoveObject(GLFWwindow* window, Object* obj)

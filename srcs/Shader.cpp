@@ -131,8 +131,8 @@ unsigned int	Shader::_compileShader(unsigned int type, const std::string& source
 
 void	Shader::setTexture(GLuint textureID)
 {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	cgl(glActiveTexture(GL_TEXTURE0));
+	cgl(glBindTexture(GL_TEXTURE_2D, textureID));
 	setUniform1i("textureSampler", textureID);
 }
 

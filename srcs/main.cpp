@@ -1,104 +1,106 @@
+#include "Object.hpp"
+#include "VertexArray.hpp"
+#include "Shader.hpp"
+#include "Camera.hpp"
+
 #include "scop.hpp"
+
+static void	renderer(GLFWwindow* window, Object& obj);
+static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib, Object* obj, Camera* camera);
+
 
 int	main(int argc, char **argv, char **envp)
 {
-	GLFWwindow*		window;
-	Object			obj;
-	try
-	{
-		checkArgument(argc, argv[1]);
-		initObjet(argv[1], obj);
+	Object		obj;
+	GLFWwindow*	window = initWindow(argc, argv, envp);
 
-		window = initWindow();
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << "Error: " << e.what() << std::endl;
-		return -1;
-	}
+	if (!window)
+		exit(-1);
+	if (obj.load(argv[1]) != 0)
+		exit(-1);
 
+	renderer(window, obj);
 
-
-
-
-
-	unsigned int vao, vbo[NUM_BUFF];
-	cgl(glGenVertexArrays(1, &vao));
-	cgl(glBindVertexArray(vao));
-	cgl(glGenBuffers(NUM_BUFF, vbo));
-
-	std::string vertexShader = readFullFile("shaders/basic.vrt");
-	std::string fragmentShader = readFullFile("shaders/basic.frg");
-	unsigned int program = createShader(vertexShader, fragmentShader);
-
-	int	width = 0;
-	int	height = 0;
-	float r = 0.5f;
-	float increment = 0.05f;
-
-	cgl(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-	while(!glfwWindowShouldClose(window))
-	{
-		cgl(glfwGetFramebufferSize(window, &width, &height));
-		cgl(glViewport(0, 0, width, height));
-		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-		r = 0.55f;
-		increment = 0.1f;
-		for (unsigned int i = 0; i < obj.triangles.size(); i++)
-		{
-			drawTriangle(program,
-					vao,
-					vbo,
-					obj.triangles[i][0],
-					obj.triangles[i][1],
-					obj.triangles[i][2],
-					r);
-
-			if (r > 0.9f)
-				increment = -0.05f;
-			else if (r < 0.1f)
-				increment = 0.05f;
-			r += increment;
-		}
-
-		cgl(glfwSwapBuffers(window));
-		cgl(glfwPollEvents());
-	}
-
-	cgl(glDeleteProgram(program));
-	cgl(glfwMakeContextCurrent(nullptr));
-	cgl(glfwDestroyWindow(window));
+	glfwDestroyWindow(window);
+	glfwMakeContextCurrent(nullptr);
 	glfwTerminate();
 	return 0;
 }
 
-void drawTriangle(unsigned int shaderToUse, unsigned int vao, unsigned int vbo[NUM_BUFF], Vertex a, Vertex b, Vertex c, float baseColor)
+static void	renderer(GLFWwindow* window, Object& obj)
 {
-	cgl(glUseProgram(shaderToUse));
-	cgl(glBindVertexArray(vao));
+	VertexArray			va;
+	std::vector<float>	vFloat;
+	std::vector<Vertex> vertices = obj.getVertices();
+	for (unsigned int i = 0; i < vertices.size(); i++)
+	{
+		vFloat.push_back(vertices[i].x);
+		vFloat.push_back(vertices[i].y);
+		vFloat.push_back(vertices[i].z);
+	}
+	VertexBuffer		vb(vFloat.data(), vFloat.size() * sizeof(float));
+	VertexBufferLayout	layout;
+	layout.push<float>(3);
+	va.addBuffer(vb, layout);
+	IndexBuffer		ib(obj._facesAllTriangles.data(), obj._facesAllTriangles.size());
 
-	float vertexes[9] = {
-		a.x, a.y, a.z,
-		b.x, b.y, b.z,
-		c.x, c.y, c.z
-	};
+	Shader	shader("shaders/basic.shader");
 
-	float	colors[12] = {
-		baseColor, baseColor, baseColor, 1.0f,
-		baseColor, baseColor, baseColor, 1.0f,
-		baseColor, baseColor, baseColor, 1.0f
-	};
+	va.unbind();
+	shader.unbind();
+	vb.unbind();
+	ib.unbind();
 
-	cgl(glBindBuffer(GL_ARRAY_BUFFER, vbo[POSITION]));
-	cgl(glBufferData(GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW));
-	cgl(glEnableVertexAttribArray(POSITION_ATTRIB_LOC));
-	cgl(glVertexAttribPointer(POSITION_ATTRIB_LOC, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0));
-
-	cgl(glBindBuffer(GL_ARRAY_BUFFER, vbo[COLOR]));
-	cgl(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
-	cgl(glEnableVertexAttribArray(COLOR_ATTRIB_LOC));
-	cgl(glVertexAttribPointer(COLOR_ATTRIB_LOC, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0));
-
-	cgl(glDrawArrays(GL_TRIANGLES, 0, 3));
+	Camera				camera;
+	camera.setPosition(vec3(0.0f, 0.0f, 2.0f));
+	renderLoopIB(window, &shader, &va, &ib, &obj, &camera);
 }
+
+static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib, Object* obj, Camera* camera)
+{
+	int		width = 0;
+	int		height = 0;
+
+	State	state = { true, false, 0.0f, false };
+	glfwSetWindowUserPointer(window, &state);
+
+	GLuint	textureID = loadBMP("resources/cat.bmp");
+
+	while (!glfwWindowShouldClose(window))
+	{
+		glfwGetFramebufferSize(window, &width, &height);
+		cgl(glViewport(0, 0, width, height));
+		cgl(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		keyPressHandler(window, camera, obj, shader);
+		if (state.renderMode)
+		{
+			keyPress_PolygonMode(window, shader);
+			state.renderMode = false;
+		}
+		shader->bind();
+		shader->setTexture(textureID);
+
+		if (state.autorotate)
+		{
+			float angle = glfwGetTime() - state.oldTime;
+			mat4_rotate(obj->model, angle, 0.0f, 1.0f, 0.0f);
+		}
+		if (state.textured)
+			shader->setUniform1i("textured", 1);
+		else
+			shader->setUniform1i("textured", 0);
+
+		shader->setModel(obj->model);
+		shader->setView(camera->getViewMatrix());
+		shader->setPerspective(camera->getProjection(), 80.0f, 0.1f, 100.0f, width, height);
+
+		va->bind();
+		ib->bind();
+		cgl(glDrawElements(GL_TRIANGLES, ib->getCount(), GL_UNSIGNED_INT, nullptr));
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+

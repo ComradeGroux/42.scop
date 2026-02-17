@@ -1,23 +1,6 @@
 #include "scop.hpp"
 
-std::vector<std::string>	split(std::string& str, const std::string& del)
-{
-	std::vector<std::string>	tokens;
-	size_t						pos = 0;
-	std::string					tok;
-
-	while ((pos = str.find(del)) != std::string::npos)
-	{
-		tok = str.substr(0, pos);
-		tokens.push_back(tok);
-		str.erase(0, pos + del.length());
-	}
-	tokens.push_back(str);
-
-	return tokens;
-}
-
-std::ifstream	openFile(char *path)
+static std::ifstream	openFile(char *path)
 {
 	std::ifstream infile(path, std::ios::in);
 	if (!infile.is_open())
@@ -55,4 +38,85 @@ void GLGetError(const char *function, const char *file, int line)
 	{
 		std::cerr << "[OpenGL Error] (" << error << ") in " << function << " " << file << " at line " << line << std::endl;
 	}
+}
+
+GLuint loadBMP(const char* filepath)
+{
+	FILE* file = fopen(filepath, "rb");
+	if (!file) {
+		std::cerr << "Impossible d'ouvrir " << filepath << std::endl;
+		return 0;
+	}
+
+	unsigned char	header[54];
+	if (fread(header, 1, 54, file) != 54) {
+		fclose(file);
+		return 0;
+	}
+
+	if (header[0] != 'B' || header[1] != 'M') {
+		fclose(file);
+		return 0;
+	}
+
+	unsigned int	dataPos, width, height, imageSize;
+	unsigned short	bitsPerPixel;
+	memcpy(&dataPos,		&header[0x0A], 4);
+	memcpy(&width,			&header[0x12], 4);
+	memcpy(&height,			&header[0x16], 4);
+	memcpy(&imageSize,		&header[0x22], 4);
+	memcpy(&bitsPerPixel,	&header[0x1C], 2);
+
+	if (bitsPerPixel != 24)
+	{
+		std::cerr << "BMP 32 bits detected" << std::endl;
+		fclose(file);
+		return 0;
+	}
+	if (imageSize == 0)
+		imageSize = width * height * 3;
+	if (dataPos == 0)
+		dataPos = 54;
+
+	unsigned int	rowSize = ((width * 3 + 3) / 4) * 4;
+	unsigned int	dataSize = width * height * 3;
+	unsigned char*	data = new unsigned char[dataSize];
+
+	fseek(file, dataPos, SEEK_SET);
+
+	for (unsigned int y = 0; y < height; y++) {
+		unsigned char* rowDest = data + y * width * 3;
+		size_t t = fread(rowDest, 1, width * 3, file);
+		(void)t;
+		fseek(file, rowSize - width * 3, SEEK_CUR);
+	}
+	fclose(file);
+
+	for (unsigned int i = 0; i + 2 < imageSize; i += 3) {
+		unsigned char tmp = data[i];
+		data[i] = data[i + 2];
+		data[i + 2] = tmp;
+	}
+
+	GLuint textureID;
+	cgl(glGenTextures(1, &textureID));
+	cgl(glBindTexture(GL_TEXTURE_2D, textureID));
+
+	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_RED);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+
+	cgl(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	cgl(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+	cgl(glPixelStorei(GL_UNPACK_ALIGNMENT, 4));
+
+	cgl(glGenerateMipmap(GL_TEXTURE_2D));
+
+	delete[] data;
+	return textureID;
 }

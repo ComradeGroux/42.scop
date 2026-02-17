@@ -25,8 +25,8 @@ class Shader
 		unsigned int		_createShader(const std::string& vertexShader, const std::string& fragmentShader);
 		unsigned int		_compileShader(unsigned int type, const std::string& source);
 
-
 		int	_getUniformLocation(const std::string& name);
+
 
 	public:
 		Shader(const std::string& filepath);
@@ -41,6 +41,7 @@ class Shader
 		void	bind(void) const;
 		void	unbind(void) const;
 
+		void	setTexture(GLuint textureID);
 		void	setModel(mat4 model);
 		void	setView(mat4 view);
 		void	setPerspective(mat4 projection, float fov_degree, float near, float far, int window_width, int window_height);

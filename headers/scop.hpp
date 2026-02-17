@@ -37,6 +37,8 @@ unsigned int	createShader(const std::string& vertexShader, const std::string& fr
 
 
 /**		UTILS		 **/
-std::string					readFullFile(std::string path);
+std::string	readFullFile(std::string path);
+GLuint		loadBMP(const char* filepath);
+
 
 void	keyPressHandler(GLFWwindow* window, Camera* camera, Object* obj, Shader* shader);

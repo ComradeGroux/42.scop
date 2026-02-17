@@ -8,6 +8,7 @@
 static void	renderer(GLFWwindow* window, Object& obj);
 static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, IndexBuffer* ib, Object* obj, Camera* camera);
 
+
 int	main(int argc, char **argv, char **envp)
 {
 	Object		obj;
@@ -62,6 +63,10 @@ static void	renderLoopIB(GLFWwindow* window, Shader* shader, VertexArray* va, In
 
 	State	state = { true, false, 0.0f };
 	glfwSetWindowUserPointer(window, &state);
+
+	GLuint	textureID = loadBMP("resources/cat.bmp");
+	shader->bind();
+	shader->setTexture(textureID);
 
 	while (!glfwWindowShouldClose(window))
 	{

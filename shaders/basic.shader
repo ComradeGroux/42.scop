@@ -3,6 +3,8 @@
 
 in vec3 position;
 
+out vec3 worldPos;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
@@ -10,6 +12,7 @@ uniform mat4 projection;
 void main()
 {
 	gl_Position = projection * view * model * vec4(position, 1.0);
+	worldPos = position;
 }
 
 
@@ -17,9 +20,12 @@ void main()
 #shader fragment
 #version 330 core
 
+in vec3 worldPos;
+
 out vec4 color;
 
-uniform int textured;
+uniform int			textured;
+uniform sampler2D	textureSampler;
 
 void main()
 {
@@ -36,7 +42,7 @@ void main()
 	}
 	else
 	{
-		// PUT TEXTURE
-		color = vec4(1.0);
+		vec2 uv = worldPos.xy * 0.1;
+		color = texture(textureSampler, uv);
 	}
 }

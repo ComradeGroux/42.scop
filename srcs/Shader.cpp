@@ -128,6 +128,13 @@ unsigned int	Shader::_compileShader(unsigned int type, const std::string& source
 	return id;
 }
 
+void	Shader::setTexture(GLuint textureID)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	setUniform1i("textureSampler", textureID);
+}
+
 void	Shader::setModel(mat4 model)
 {
 	setUniformMatrix4f("model", model);

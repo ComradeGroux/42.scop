@@ -60,6 +60,7 @@ static GLFWwindow*	createWindow()
 	glfwSwapInterval(1);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(debug_callback, nullptr);
 

@@ -39,3 +39,64 @@ void GLGetError(const char *function, const char *file, int line)
 		std::cerr << "[OpenGL Error] (" << error << ") in " << function << " " << file << " at line " << line << std::endl;
 	}
 }
+
+GLuint loadBMP(const char* filepath)
+{
+	FILE* file = fopen(filepath, "rb");
+	if (!file) {
+		std::cerr << "Impossible d'ouvrir " << filepath << std::endl;
+		return 0;
+	}
+
+	unsigned char header[54];
+	if (fread(header, 1, 54, file) != 54) {
+		fclose(file);
+		return 0;
+	}
+
+	if (header[0] != 'B' || header[1] != 'M') {
+		fclose(file);
+		return 0;
+	}
+
+	unsigned int dataPos = *(int*)&(header[0x0A]);
+	unsigned int width = *(int*)&(header[0x12]);
+	unsigned int height = *(int*)&(header[0x16]);
+	unsigned int imageSize = *(int*)&(header[0x22]);
+
+	std::cout << "BMP chargé: " << width << "x" << height << std::endl;
+	std::cout << "Taille image: " << imageSize << std::endl;
+
+	if (imageSize == 0) imageSize = width * height * 3;
+	if (dataPos == 0) dataPos = 54;
+
+	unsigned char* data = new unsigned char[imageSize];
+
+	size_t tmp = fread(data, 1, imageSize, file);
+	(void)tmp;
+	fclose(file);
+
+	for (unsigned int i = 0; i < imageSize; i += 3) {
+		unsigned char tmp = data[i];
+		data[i] = data[i + 2];
+		data[i + 2] = tmp;
+	}
+
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
+				GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	delete[] data;
+	std::cout << "Texture ID créée: " << textureID << std::endl;
+	return textureID;
+}

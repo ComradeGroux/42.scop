@@ -73,14 +73,23 @@ GLuint loadBMP(const char* filepath)
 		fclose(file);
 		return 0;
 	}
-	if (imageSize == 0) imageSize = width * height * 3;
-	if (dataPos == 0) dataPos = 54;
+	if (imageSize == 0)
+		imageSize = width * height * 3;
+	if (dataPos == 0)
+		dataPos = 54;
 
-	unsigned char* data = new unsigned char[imageSize];
+	unsigned int	rowSize = ((width * 3 + 3) / 4) * 4;
+	unsigned int	dataSize = width * height * 3;
+	unsigned char*	data = new unsigned char[dataSize];
 
 	fseek(file, dataPos, SEEK_SET);
-	size_t t = fread(data, 1, imageSize, file);
-	(void)t;
+
+	for (unsigned int y = 0; y < height; y++) {
+		unsigned char* rowDest = data + y * width * 3;
+		size_t t = fread(rowDest, 1, width * 3, file);
+		(void)t;
+		fseek(file, rowSize - width * 3, SEEK_CUR);
+	}
 	fclose(file);
 
 	for (unsigned int i = 0; i + 2 < imageSize; i += 3) {
@@ -93,12 +102,18 @@ GLuint loadBMP(const char* filepath)
 	cgl(glGenTextures(1, &textureID));
 	cgl(glBindTexture(GL_TEXTURE_2D, textureID));
 
-	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	cgl(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_RED);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+
+	cgl(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	cgl(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+	cgl(glPixelStorei(GL_UNPACK_ALIGNMENT, 4));
 
 	cgl(glGenerateMipmap(GL_TEXTURE_2D));
 

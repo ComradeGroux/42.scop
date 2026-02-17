@@ -2,6 +2,7 @@
 #version 330 core
 
 in vec3 position;
+in vec2 texCoord;
 
 out vec3 worldPos;
 
@@ -42,7 +43,7 @@ void main()
 	}
 	else
 	{
-		vec2 uv = worldPos.xy * 0.1;
+		vec2 uv = worldPos.zy;
 		color = texture(textureSampler, uv);
 	}
 }

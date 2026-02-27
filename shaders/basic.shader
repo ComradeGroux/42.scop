@@ -2,7 +2,6 @@
 #version 330 core
 
 in vec3 position;
-in vec2 texCoord;
 
 out vec3 worldPos;
 

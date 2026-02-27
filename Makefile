@@ -39,7 +39,7 @@ clean:
 	@echo "→ Nettoyage..."
 	rm -rf $(BUILD_DIR)/$(OBJS_DIR)
 
-fullclean:
+fullclean: clean
 	@echo "→ Nettoyage complet"
 	rm -rf $(BUILD_DIR)/
 

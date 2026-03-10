@@ -12,6 +12,7 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 
+#include "opengl.hpp"
 
 typedef	struct State {
 	bool	autorotate;
@@ -19,9 +20,6 @@ typedef	struct State {
 	float	oldTime;
 	bool	renderMode;
 } State;
-
-/**		MAIN		 **/
-
 
 /**		INIT	 	 **/
 GLFWwindow*	initWindow(int argc, char** argv, char** envp);

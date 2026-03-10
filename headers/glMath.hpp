@@ -47,10 +47,6 @@ inline vec3 vec3_subtract(const vec3& a, const vec3& b)
 	return vec3(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-
-
-
-
 inline void mat4_identity(mat4 m)
 {
 	m[0] = 1.0f; m[4] = 0.0f; m[8]  = 0.0f; m[12] = 0.0f;
@@ -77,7 +73,6 @@ inline void mat4_multiply(mat4 result, const mat4 a, const mat4 b)
 	}
 	memcpy(result, temp, sizeof(mat4));
 }
-
 
 inline void mat4_translate(mat4 m, float x, float y, float z)
 {
@@ -150,8 +145,6 @@ inline void mat4_scale(mat4 m, float x, float y, float z)
 	m[10] = z;
 }
 
-
-
 inline void mat4_look_at(mat4 m, const vec3& eye, const vec3& center, const vec3& up)
 {
 	vec3 f = vec3_subtract(center, eye);
@@ -180,7 +173,6 @@ inline void mat4_look_at(mat4 m, const vec3& eye, const vec3& center, const vec3
 	m[14] = vec3_dot(f, eye);
 }
 
-
 inline void mat4_perspective(mat4 m, float fov, float aspect, float near, float far)
 {
 	float tanHalfFov = tanf(fov / 2.0f);
@@ -192,7 +184,6 @@ inline void mat4_perspective(mat4 m, float fov, float aspect, float near, float 
 	m[11] = -1.0f;
 	m[14] = -(2.0f * far * near) / (far - near);
 }
-
 
 inline void mat4_ortho(mat4 m, float left, float right, float bottom, float top, float near, float far)
 {

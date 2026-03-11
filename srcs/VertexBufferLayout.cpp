@@ -20,12 +20,6 @@ unsigned int	VertexBufferLayout::getStride(void) const
 	return _stride;
 }
 
-template<typename T>
-void	VertexBufferLayout::push(unsigned int count)
-{
-	static_assert(false);
-}
-
 template<>
 void	VertexBufferLayout::push<float>(unsigned int count)
 {

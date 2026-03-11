@@ -27,5 +27,24 @@ void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void	debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
 {
-	std::cerr << "OpenGL ERROR: " << message << std::endl;
+	// Ignorer les notifications (stats de shaders AMD, etc...)
+	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+		return;
+
+	const char* severityStr = "UNKNOWN";
+	switch (severity)
+	{
+		case GL_DEBUG_SEVERITY_HIGH:
+			severityStr = "HIGH";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			severityStr = "MEDIUM";
+			break;
+		case GL_DEBUG_SEVERITY_LOW:
+			severityStr = "LOW";
+			break;
+		default:
+			break;
+	}
+	std::cerr << "OpenGL [" << severityStr << "]: " << message << std::endl;
 }
